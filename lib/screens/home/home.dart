@@ -5,12 +5,7 @@ import 'package:quaily/screens/home/components/homePage.dart';
 import 'package:quaily/screens/profile/profile.dart';
 import 'package:quaily/screens/settings/settings.dart';
 
-class Home extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
+class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

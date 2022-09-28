@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'package:quaily/components/quailyAppBar.dart';
+import 'package:quaily/services/firebase/firebaseFunctions.dart';
 
 class HomePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _HomePageState();
+  State<StatefulWidget> createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   static const _title = 'Quaily.';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProfilePicUrl();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +36,14 @@ class _HomePageState extends State<HomePage> {
               shape: const CircleBorder(),
               clipBehavior: Clip.hardEdge,
               color: Colors.transparent,
-              child: Ink.image(
-                image: const AssetImage('assets/default_profile.png'),
-                fit: BoxFit.cover,
-                child: InkWell(
-                  onTap: () => Navigator.pushNamed(context, '/profile'),
+              child: ValueListenableBuilder<String>(
+                valueListenable: profilePicUrl,
+                builder: (context, value, child) => Ink.image(
+                  image: getProfilePic(),
+                  fit: BoxFit.cover,
+                  child: InkWell(
+                    onTap: () => Navigator.pushNamed(context, '/profile'),
+                  ),
                 ),
               ),
             ),
