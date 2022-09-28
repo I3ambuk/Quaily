@@ -10,29 +10,27 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark(),
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(
-                  Icons.arrow_back,
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(
+                Icons.arrow_back,
               ),
-              const Text(_title),
-              IconButton(
-                onPressed: () => Navigator.pushNamed(context, '/settings'),
-                icon: const Icon(
-                  Icons.more_vert,
-                ),
+            ),
+            const Text(_title),
+            IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/settings'),
+              icon: const Icon(
+                Icons.more_vert,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

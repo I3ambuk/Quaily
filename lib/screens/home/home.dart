@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:quaily/components/quailyAppBAr.dart';
+
+import 'package:quaily/screens/friends/friends.dart';
+import 'package:quaily/screens/home/components/homePage.dart';
+import 'package:quaily/screens/profile/profile.dart';
+import 'package:quaily/screens/settings/settings.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -7,38 +11,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  static const _title = 'Quaily.';
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: QuailyAppBar(
-          IconButton(
-            iconSize: 32.0,
-            onPressed: () => Navigator.pushNamed(context, '/friends'),
-            icon: const Icon(
-              Icons.person_add,
-            ),
-          ),
-          _title,
-          Container(
-            padding: const EdgeInsets.all(4.0),
-            child: Material(
-              shape: const CircleBorder(),
-              clipBehavior: Clip.hardEdge,
-              color: Colors.transparent,
-              child: Ink.image(
-                image: const AssetImage('assets/default_profile.png'),
-                fit: BoxFit.cover,
-                child: InkWell(
-                  onTap: () => Navigator.pushNamed(context, '/profile'),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    return MaterialApp(
+      theme: ThemeData.dark().copyWith(
+          appBarTheme: ThemeData.dark()
+              .appBarTheme
+              .copyWith(backgroundColor: Color.fromARGB(255, 46, 71, 83))),
+      initialRoute: '/home',
+      routes: <String, WidgetBuilder>{
+        '/home': (BuildContext context) => HomePage(),
+        '/friends': (context) => Friends(),
+        '/profile': (context) => Profile(),
+        '/settings': (context) => Settings(),
+      },
     );
   }
 }
