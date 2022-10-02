@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:quaily/screens/friends/friends.dart';
-import 'package:quaily/screens/home/components/homePage.dart';
-import 'package:quaily/screens/profile/profile.dart';
-import 'package:quaily/screens/settings/settings.dart';
+import 'package:quaily/src/features/friends/screens/friends.dart';
+import 'package:quaily/src/features/posts/screens/components/homePage.dart';
+import 'package:quaily/src/features/settings/screens/profile.dart';
+import 'package:quaily/src/features/settings/screens/settings.dart';
 
 class Home extends StatelessWidget {
   @override

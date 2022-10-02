@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:quaily/screens/home/home.dart';
+import 'package:quaily/src/features/posts/screens/home.dart';
 
 class PhoneLogin extends StatefulWidget {
   @override

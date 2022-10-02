@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:quaily/services/firebase/firebaseFunctions.dart';
+import 'package:quaily/src/common/services/firebase/firebaseFunctions.dart';
 
 class Profile extends StatefulWidget {
   @override

@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:quaily/main.dart';
-import 'package:quaily/screens/authentication/signup.dart';
+import 'package:quaily/src/features/authentication/screens/signup.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

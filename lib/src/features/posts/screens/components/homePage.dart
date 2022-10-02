@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:quaily/components/quailyAppBar.dart';
-import 'package:quaily/services/firebase/firebaseFunctions.dart';
+import 'package:quaily/src/common/widgets/quailyAppBar.dart';
+import 'package:quaily/src/common/services/firebase/firebaseFunctions.dart';
 
 class HomePage extends StatefulWidget {
   @override

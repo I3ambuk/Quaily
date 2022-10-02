@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quaily/components/quailyAppBar.dart';
+import 'package:quaily/src/common/widgets/quailyAppBar.dart';
 
 class Friends extends StatefulWidget {
   @override

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:quaily/screens/authentication/signup.dart';
-import 'package:quaily/screens/home/home.dart';
-import 'services/firebase/firebase_options.dart';
+import 'package:quaily/src/features/authentication/screens/signup.dart';
+import 'package:quaily/src/features/posts/screens/home.dart';
+import 'src/common/services/firebase/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
@@ -28,18 +28,3 @@ void main() async {
     ),
   ));
 }
-
-
-
-
-/**
- * MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Quaily'),
-        ),
-        body: Text('BODY TEXT'),
-      ),
-    );
-  }
- */
