@@ -35,11 +35,11 @@ class _SettingsState extends State<Settings> {
             foregroundColor: MaterialStateProperty.all(Colors.red),
           ),
           onPressed: () async {
-            await FirebaseAuth.instance
-                .signOut()
-                .then((value) => Navigator.pushNamed(context, '/signup'));
+            await FirebaseAuth.instance.signOut().then((value) =>
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/signup', (route) => false));
           },
-          child: Text('LogOut'),
+          child: const Text('LogOut'),
         ),
       ),
     );

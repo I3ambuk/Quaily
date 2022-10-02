@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quaily/src/features/authentication/screens/signup.dart';
 
 import 'package:quaily/src/features/friends/screens/friends.dart';
 import 'package:quaily/src/features/posts/screens/components/homePage.dart';
@@ -19,6 +20,7 @@ class Home extends StatelessWidget {
         '/friends': (context) => Friends(),
         '/profile': (context) => Profile(),
         '/settings': (context) => Settings(),
+        '/signup': (context) => SignUp(),
       },
     );
   }
