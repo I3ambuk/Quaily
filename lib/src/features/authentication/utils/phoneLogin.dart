@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:quaily/src/features/authentication/screens/components/phoneLogin.dart';
+import 'package:quaily/src/features/authentication/utils/AddUser.dart';
 
 void loginWithPhone(PhoneLoginState state, String phoneNumber) async {
   FirebaseAuth.instance.verifyPhoneNumber(
@@ -27,6 +28,7 @@ void verifyOtp(
     await FirebaseAuth.instance.signInWithCredential(credential).then(
       (value) {
         //User is successfully signed in, can set user to Firebaseauth.instance.currentUser
+        addUser(FirebaseAuth.instance.currentUser);
       },
     ).whenComplete(
       () {
