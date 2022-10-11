@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "888943185574-p0uc5mmm2mevv7vupmnrlq4oh1jo9ire.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.quaily",
+            "certificate_hash": "cab8611c039b3617d5bad380193f65e012fb7d01"
+          }
+        },
+        {
           "client_id": "888943185574-kkfv40ne1ffppkhsbsr4vodjt5f293gf.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -57,42 +65,6 @@
             "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
           }
         },
-        {
-          "client_id": "888943185574-kkfv40ne1ffppkhsbsr4vodjt5f293gf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCVGA5K9wEV4apQqcprfcYKzFPTYVYZmvI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "888943185574-kkfv40ne1ffppkhsbsr4vodjt5f293gf.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "888943185574-7kcv95nl8qg94j30t6sgdsgqnijr2fmp.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.quaily"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:888943185574:android:1c2ee42d68459d5b34ae67",
-        "android_client_info": {
-          "package_name": "com.mycompany.tutorial"
-        }
-      },
-      "oauth_client": [
         {
           "client_id": "888943185574-kkfv40ne1ffppkhsbsr4vodjt5f293gf.apps.googleusercontent.com",
           "client_type": 3
