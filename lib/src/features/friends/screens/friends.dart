@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quaily/src/common/widgets/quailyAppBar.dart';
+import 'package:quaily/src/features/friends/components/contactListWidget.dart';
 
 class Friends extends StatefulWidget {
   @override
@@ -51,9 +52,9 @@ class _FriendsState extends State<Friends> with TickerProviderStateMixin {
         ),
         body: TabBarView(
           controller: _tabController,
-          children: const <Widget>[
+          children: <Widget>[
             Center(
-              child: Text("Kontakte vom Handy anzeigen"),
+              child: ContactListWidget(),
             ),
             Center(
               child: Text("Bereits registrierte Freunde anzeigen"),

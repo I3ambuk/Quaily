@@ -47,7 +47,8 @@ dependencies:
   google_fonts: ^3.0.1
   image_picker: ^0.8.5+3
   permission_handler: ^10.0.1
-  cloud_firestore: ^3.5.0
+  cloud_firestore: ^3.5.0 
+  contacts_service: ^0.6.3
 
 dev_dependencies:
   flutter_test:
