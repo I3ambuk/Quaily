@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:quaily/src/features/authentication/utils/phoneLogin.dart';
+import 'package:quaily/src/features/posts/screens/home.dart';
 
 class PhoneLogin extends StatefulWidget {
   @override
@@ -94,7 +95,8 @@ class PhoneLoginState extends State<PhoneLogin> {
       textColor: Colors.white,
       fontSize: 16.0,
     );
-    Navigator.pushNamed(context, '/home');
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => Home()));
   }
 
   void handlefailedLogin() {

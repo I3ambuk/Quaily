@@ -20,10 +20,10 @@ void main() async {
               .appBarTheme
               .copyWith(backgroundColor: Color.fromARGB(255, 46, 71, 83))),
       debugShowCheckedModeBanner: false,
-      initialRoute: FirebaseAuth.instance.currentUser != null ? '/home' : '/',
+      initialRoute: '/',
       routes: <String, WidgetBuilder>{
-        '/': (BuildContext context) => SignUp(),
-        '/home': (BuildContext context) => Home(),
+        '/': (BuildContext context) =>
+            FirebaseAuth.instance.currentUser != null ? Home() : SignUp(),
       },
     ),
   ));
