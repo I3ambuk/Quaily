@@ -5,18 +5,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 CollectionReference usersCollection =
     FirebaseFirestore.instance.collection('users');
-
-//TODO: Make sure, user is only added once
-
-FutureOr<void> addUser(User? user) {
+/**
+ * Add a User to Firebase Collection named 'users'
+ * Firebase Rule is responsible for users only added once
+ */
+void addUser(User? user) {
   if (user != null) {
     var data = {
       'phoneNumber': user.phoneNumber,
       'uid': user.uid,
     };
-    return usersCollection.add(data);
+    usersCollection.doc(user.uid).set(data);
   } else {
     print('Adding User failed');
   }
-  return null;
 }
