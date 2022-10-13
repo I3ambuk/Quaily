@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:quaily/src/features/friends/components/contactListWidget.dart';
+import 'package:quaily/src/features/friends/utils/customContact.dart';
 
 List<Contact> _nonUserContacts = [];
 List<Contact> _userContacts = [];
@@ -14,14 +12,22 @@ var snapshotStream = FirebaseFirestore.instance.collection('users').snapshots();
 //public methods
 Future<void> initContacts(ContactListWidgetState state) async {
   if (_nonUserContacts.isEmpty) {
-    _nonUserContacts = (await ContactsService.getContacts());
+    _nonUserContacts =
+        (await ContactsService.getContactsNew(withThumbnails: false));
+    _extractPhoneFromContacts(_nonUserPhonenumbers, _nonUserContacts);
+    //listen to new users, if there phonenumber matches with a contact number, all needed lists are updated
+
+    //Lazy load thumbnails after rendering initial contacts and map Color
+    for (final contact in _nonUserContacts) {
+      ContactsService.getAvatar(contact).then((avatar) {
+        if (avatar == null) return; // Don't redraw if no change.
+        contact.avatar = avatar;
+      });
+
+      //No Users are known at the beginning
+      _setUpUserListener(state);
+    }
   }
-
-  _extractPhoneFromContacts(_nonUserPhonenumbers, _nonUserContacts);
-
-  //listen to new users, if there phonenumber matches with a contact number, all needed lists are updated
-  //No Users are known at the beginning
-  _setUpUserListener(state);
 }
 
 List<Contact> getUserContactListFiltered({String? filter}) {
@@ -44,13 +50,13 @@ List<Contact> _getFilteredList(String filter, List<Contact> listToFilter) {
     filtered.retainWhere((contact) {
       String givename = contact.givenName ?? '';
       String displayname = contact.displayName ?? '';
-      Item? number = contact.phones?.firstWhere(
+      Item? number = Item(contact.phones?.firstWhere(
           (phn) => phn.value != null ? phn.value!.contains(searchTerm) : false,
-          orElse: () => Item());
+          orElse: () => Item(null)));
 
       bool containsGivenName = givename.toLowerCase().contains(searchTerm);
       bool containsDisplayName = displayname.toLowerCase().contains(searchTerm);
-      bool containsPhnNumber = (number != null && number != Item());
+      bool containsPhnNumber = (number != null && number != Item(null));
 
       return containsGivenName || containsDisplayName || containsPhnNumber;
     });
@@ -104,7 +110,7 @@ void _setUpUserListener(ContactListWidgetState state) {
 }
 
 void _updateContacts(String phone) {
-  var contactToRemove = Contact();
+  var contactToRemove = Contact(null);
   for (var contact in _nonUserContacts) {
     if (contact.phones != null) {
       if (contact.phones!.any((element) => element.value == phone)) {

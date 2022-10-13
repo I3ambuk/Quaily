@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:quaily/src/features/friends/utils/contactListUtils.dart';
+import 'package:quaily/src/features/friends/utils/customContact.dart';
 
 class ContactListWidget extends StatefulWidget {
   @override
@@ -10,11 +10,11 @@ class ContactListWidget extends StatefulWidget {
 }
 
 class ContactListWidgetState extends State<ContactListWidget> {
-  //TODO: contacts color doesnt change everytime (noRandom but Mapping)
   //TODO: Button Funktionalität zum Anfragen von Freunden
   //TODO: Neuer Abschnitt für momentane Freundesanfragen
   //TODO: Freundesanfrage annehmen Funktionalität
   //TODO: Button Funktionalität zum Einladen von Freunden
+  //TODO: Kontakte schon beim starten der App initialisieren im Hintergrund
 
   TextEditingController searchbarController = TextEditingController();
   late IconButton addContactButton;
@@ -134,8 +134,7 @@ Widget getListWidget(List<Contact> list, Widget getButton(Contact c)) {
             leading: (c.avatar != null && c.avatar!.isNotEmpty)
                 ? CircleAvatar(backgroundImage: MemoryImage(c.avatar!))
                 : CircleAvatar(
-                    backgroundColor: Colors
-                        .primaries[Random().nextInt(Colors.primaries.length)],
+                    backgroundColor: c.getColor(),
                     child: Text(
                       c.initials(),
                       style: const TextStyle(color: Colors.black),
@@ -149,109 +148,3 @@ Widget getListWidget(List<Contact> list, Widget getButton(Contact c)) {
     ),
   );
 }
-
-
-// Expanded(
-        //   child: Column(
-        //     children: [
-              // Container(
-              //   child: const Text('Kontakte auf BeReal: '),
-              // ),
-        //       Expanded(
-        //         child: SafeArea(
-        //           child: ValueListenableBuilder<List<Contact>>(
-        //             valueListenable: userContactsNotifier,
-        //             builder: (context, value, child) => ListView.builder(
-        //               shrinkWrap: true,
-        //               itemCount: userContactsNotifier.value.length,
-        //               itemBuilder: (BuildContext context, int index) {
-        //                 Contact? c = userContactsNotifier.value.elementAt(index);
-        //                 return Container(
-        //                   decoration: const BoxDecoration(
-        //                     border: Border(
-        //                       top: BorderSide(
-        //                         color: Colors.blueGrey,
-        //                         width: 1,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                   child: ListTile(
-        //                     contentPadding: const EdgeInsets.only(
-        //                         left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
-        //                     leading: (c.avatar != null && c.avatar!.isNotEmpty)
-        //                         ? CircleAvatar(
-        //                             backgroundImage: MemoryImage(c.avatar!))
-        //                         : CircleAvatar(
-        //                             backgroundColor: Colors.primaries[Random()
-        //                                 .nextInt(Colors.primaries.length)],
-        //                             child: Text(
-        //                               c.initials(),
-        //                               style:
-        //                                   const TextStyle(color: Colors.black),
-        //                             ),
-        //                           ),
-        //                     title: Text(c.displayName ?? ""),
-        //                     trailing: IconButton(
-        //                         icon: const Icon(Icons.person_add),
-        //                         onPressed: () => {
-        //                               //Freund hinzufügen
-        //                             }),
-        //                   ),
-        //                 );
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       Container(
-        //         child: const Text('Lade Kontakte ein: '),
-        //       ),
-        //       Expanded(
-        //         child: SafeArea(
-        //           child: ValueListenableBuilder<List<Contact>>(
-        //             valueListenable: contactsNotifier,
-        //             builder: (context, value, child) => ListView.builder(
-        //               shrinkWrap: true,
-        //               itemCount: contactsNotifier.value.length,
-        //               itemBuilder: (BuildContext context, int index) {
-        //                 Contact? c = contactsNotifier.value.elementAt(index);
-        //                 return Container(
-        //                   decoration: const BoxDecoration(
-        //                     border: Border(
-        //                       top: BorderSide(
-        //                         color: Colors.blueGrey,
-        //                         width: 1,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                   child: ListTile(
-        //                     contentPadding: const EdgeInsets.only(
-        //                         left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
-        //                     leading: (c.avatar != null && c.avatar!.isNotEmpty)
-        //                         ? CircleAvatar(
-        //                             backgroundImage: MemoryImage(c.avatar!))
-        //                         : CircleAvatar(
-        //                             backgroundColor: Colors.primaries[Random()
-        //                                 .nextInt(Colors.primaries.length)],
-        //                             child: Text(
-        //                               c.initials(),
-        //                               style:
-        //                                   const TextStyle(color: Colors.black),
-        //                             ),
-        //                           ),
-        //                     title: Text(c.displayName ?? ""),
-        //                     trailing: IconButton(
-        //                         icon: const Icon(Icons.mail),
-        //                         onPressed: () => {
-        //                               //Freund einladen
-        //                             }),
-        //                   ),
-        //                 );
-        //               },
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
