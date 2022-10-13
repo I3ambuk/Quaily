@@ -3,6 +3,8 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+//TODO: initContact und erstmaliges hinzufügen der Kontakte muss future sein
+
 List<Contact> _nonUserContacts = [];
 List<Contact> _userContacts = [];
 List<String> _nonUserPhonenumbers = [];

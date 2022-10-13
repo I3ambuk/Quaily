@@ -10,6 +10,12 @@ class ContactListWidget extends StatefulWidget {
 }
 
 class _ContactListWidgetState extends State<ContactListWidget> {
+  //TODO: contacts color doesnt change everytime (noRandom but Mapping)
+  //TODO: Button Funktionalität zum Anfragen von Freunden
+  //TODO: Neuer Abschnitt für momentane Freundesanfragen
+  //TODO: Freundesanfrage annehmen Funktionalität
+  //TODO: Button Funktionalität zum Einladen von Freunden
+
   TextEditingController searchbarController = TextEditingController();
 
   @override

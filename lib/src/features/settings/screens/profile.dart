@@ -12,6 +12,9 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  //TODO: anzeigen folgender Informationen: pb, Anzeigename, echtername...
+  //TODO: Extra Button und Seite für Bearbeiten des Profils
+
   static const String _title = 'Profile';
 
   var user = FirebaseAuth.instance.currentUser;
