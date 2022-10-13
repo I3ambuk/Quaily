@@ -16,16 +16,15 @@ Future<void> initContacts(ContactListWidgetState state) async {
         (await ContactsService.getContactsNew(withThumbnails: false));
     _extractPhoneFromContacts(_nonUserPhonenumbers, _nonUserContacts);
     //listen to new users, if there phonenumber matches with a contact number, all needed lists are updated
-
-    //Lazy load thumbnails after rendering initial contacts and map Color
+    //No Users are known at the beginning
+    _setUpUserListener(state);
+    //Lazy load thumbnails after rendering initial contacts
     for (final contact in _nonUserContacts) {
       ContactsService.getAvatar(contact).then((avatar) {
         if (avatar == null) return; // Don't redraw if no change.
         contact.avatar = avatar;
+        state.render();
       });
-
-      //No Users are known at the beginning
-      _setUpUserListener(state);
     }
   }
 }
@@ -116,6 +115,7 @@ void _updateContacts(String phone) {
       if (contact.phones!.any((element) => element.value == phone)) {
         _userContacts.add(contact);
         contactToRemove = contact;
+        break;
       }
     }
   }
