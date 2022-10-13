@@ -6,10 +6,10 @@ import 'package:quaily/src/features/friends/utils/contactListUtils.dart';
 
 class ContactListWidget extends StatefulWidget {
   @override
-  _ContactListWidgetState createState() => _ContactListWidgetState();
+  ContactListWidgetState createState() => ContactListWidgetState();
 }
 
-class _ContactListWidgetState extends State<ContactListWidget> {
+class ContactListWidgetState extends State<ContactListWidget> {
   //TODO: contacts color doesnt change everytime (noRandom but Mapping)
   //TODO: Button Funktionalität zum Anfragen von Freunden
   //TODO: Neuer Abschnitt für momentane Freundesanfragen
@@ -17,16 +17,46 @@ class _ContactListWidgetState extends State<ContactListWidget> {
   //TODO: Button Funktionalität zum Einladen von Freunden
 
   TextEditingController searchbarController = TextEditingController();
+  late IconButton addContactButton;
+  late IconButton inviteContactButton;
+  late Widget userContactListWidget;
+  late Widget nonUserContactListWidget;
+  bool showUserList = true;
+  bool showNonUserList = true;
 
   @override
   void initState() {
     super.initState();
+    addContactButton = IconButton(
+        icon: const Icon(Icons.person_add),
+        onPressed: () => {
+              //Kontakt freundschaftsanfrage senden
+            });
+    inviteContactButton = IconButton(
+        icon: const Icon(Icons.mail),
+        onPressed: () => {
+              //Kontakt zu Quaily einladen
+            });
+    render();
+    initContacts(this);
+    searchbarController.addListener(() {
+      render();
+    });
+  }
 
-    initContacts();
-    renderContacts();
+  void render() {
+    var userList = getUserContactListFiltered(filter: searchbarController.text);
+    var nonUserList =
+        getNonUserContactListFiltered(filter: searchbarController.text);
 
-    searchbarController
-        .addListener(() => filterContacts(searchbarController.text));
+    setState(() {
+      showUserList = userList.isNotEmpty;
+      showNonUserList = nonUserList.isNotEmpty;
+
+      userContactListWidget = getListWidget(userList, (c) => addContactButton);
+      nonUserContactListWidget =
+          getListWidget(nonUserList, (c) => inviteContactButton);
+    });
   }
 
   @override
@@ -52,112 +82,72 @@ class _ContactListWidgetState extends State<ContactListWidget> {
           child: CustomScrollView(
             slivers: <Widget>[
               SliverToBoxAdapter(
-                child: Container(
-                  color: Colors.grey,
-                  alignment: Alignment.center,
-                  height: 30,
-                  child: Text('Kontakte auf Quaily: '),
-                ),
-              ),
-              ValueListenableBuilder(
-                valueListenable: userContactsNotifier,
-                builder: (context, value, child) => SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: userContactsNotifier.value.length,
-                    (BuildContext context, int index) {
-                      Contact? c = userContactsNotifier.value.elementAt(index);
-                      return Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: Colors.blueGrey,
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.only(
-                              left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
-                          leading: (c.avatar != null && c.avatar!.isNotEmpty)
-                              ? CircleAvatar(
-                                  backgroundImage: MemoryImage(c.avatar!))
-                              : CircleAvatar(
-                                  backgroundColor: Colors.primaries[Random()
-                                      .nextInt(Colors.primaries.length)],
-                                  child: Text(
-                                    c.initials(),
-                                    style: const TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                          title: Text(c.displayName ?? ""),
-                          trailing: IconButton(
-                              icon: const Icon(Icons.person_add),
-                              onPressed: () => {
-                                    //Freund hinzufügen
-                                  }),
-                        ),
-                      );
-                    },
+                child: Visibility(
+                  visible: showUserList,
+                  child: Container(
+                    color: Colors.grey,
+                    alignment: Alignment.center,
+                    height: 30,
+                    child: Text('Kontakte auf Quaily: '),
                   ),
                 ),
               ),
+              userContactListWidget,
               SliverToBoxAdapter(
-                child: Container(
-                  color: Colors.grey,
-                  alignment: Alignment.center,
-                  height: 30,
-                  child: Text('Kontakte einladen: '),
-                ),
-              ),
-              ValueListenableBuilder(
-                valueListenable: nonUserContactsNotifier,
-                builder: (context, value, child) => SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: nonUserContactsNotifier.value.length,
-                    (BuildContext context, int index) {
-                      Contact? c =
-                          nonUserContactsNotifier.value.elementAt(index);
-                      return Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: Colors.blueGrey,
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.only(
-                              left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
-                          leading: (c.avatar != null && c.avatar!.isNotEmpty)
-                              ? CircleAvatar(
-                                  backgroundImage: MemoryImage(c.avatar!))
-                              : CircleAvatar(
-                                  backgroundColor: Colors.primaries[Random()
-                                      .nextInt(Colors.primaries.length)],
-                                  child: Text(
-                                    c.initials(),
-                                    style: const TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                          title: Text(c.displayName ?? ""),
-                          trailing: IconButton(
-                              icon: const Icon(Icons.mail),
-                              onPressed: () => {
-                                    //Freund einladen
-                                  }),
-                        ),
-                      );
-                    },
+                child: Visibility(
+                  visible: showNonUserList,
+                  child: Container(
+                    color: Colors.grey,
+                    alignment: Alignment.center,
+                    height: 30,
+                    child: Text('Kontakte einladen: '),
                   ),
                 ),
               ),
+              nonUserContactListWidget,
             ],
           ),
         ),
       ],
     );
   }
+}
+
+Widget getListWidget(List<Contact> list, Widget getButton(Contact c)) {
+  return SliverList(
+    delegate: SliverChildBuilderDelegate(
+      childCount: list.length,
+      (BuildContext context, int index) {
+        Contact? c = list.elementAt(index);
+        return Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Colors.blueGrey,
+                width: 1,
+              ),
+            ),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.only(
+                left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
+            leading: (c.avatar != null && c.avatar!.isNotEmpty)
+                ? CircleAvatar(backgroundImage: MemoryImage(c.avatar!))
+                : CircleAvatar(
+                    backgroundColor: Colors
+                        .primaries[Random().nextInt(Colors.primaries.length)],
+                    child: Text(
+                      c.initials(),
+                      style: const TextStyle(color: Colors.black),
+                    ),
+                  ),
+            title: Text(c.displayName ?? ""),
+            trailing: getButton(c),
+          ),
+        );
+      },
+    ),
+  );
 }
 
 
