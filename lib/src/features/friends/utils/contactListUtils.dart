@@ -41,6 +41,17 @@ List<Contact> getNonUserContactListFiltered({String? filter}) {
   return _getFilteredList(_currentFilter, _nonUserContacts);
 }
 
+void addContactAsFriend(Contact c) {
+  print(c.givenName);
+  //TODO: Freundesanfrage funktionalität
+}
+
+void inviteContact(Contact c) {
+  //TODO: Freund einladen funktionalität
+  print(c.givenName);
+}
+
+//private
 List<Contact> _getFilteredList(String filter, List<Contact> listToFilter) {
   List<Contact> filtered = List<Contact>.from(listToFilter);
   if (filter != '') {
@@ -63,7 +74,6 @@ List<Contact> _getFilteredList(String filter, List<Contact> listToFilter) {
   return filtered;
 }
 
-//private
 void _extractPhoneFromContacts(List<String> out, List<Contact> contactList) {
   for (var contact in contactList) {
     if (contact.phones != null &&

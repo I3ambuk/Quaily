@@ -10,33 +10,37 @@ class ContactListWidget extends StatefulWidget {
 }
 
 class ContactListWidgetState extends State<ContactListWidget> {
-  //TODO: Button Funktionalität zum Anfragen von Freunden
   //TODO: Neuer Abschnitt für momentane Freundesanfragen
   //TODO: Freundesanfrage annehmen Funktionalität
-  //TODO: Button Funktionalität zum Einladen von Freunden
   //TODO: Kontakte schon beim starten der App initialisieren im Hintergrund
 
   TextEditingController searchbarController = TextEditingController();
-  late IconButton addContactButton;
-  late IconButton inviteContactButton;
   late Widget userContactListWidget;
   late Widget nonUserContactListWidget;
   bool showUserList = true;
   bool showNonUserList = true;
 
+  IconButton createAddContact(Contact c) {
+    return IconButton(
+        icon: const Icon(Icons.person_add),
+        onPressed: () {
+          //Kontakt freundschaftsanfrage senden
+          addContactAsFriend(c);
+        });
+  }
+
+  IconButton createInviteContact(Contact c) {
+    return IconButton(
+        icon: const Icon(Icons.mail),
+        onPressed: () {
+          //Kontakt zu Quaily einladen
+          inviteContact(c);
+        });
+  }
+
   @override
   void initState() {
     super.initState();
-    addContactButton = IconButton(
-        icon: const Icon(Icons.person_add),
-        onPressed: () => {
-              //Kontakt freundschaftsanfrage senden
-            });
-    inviteContactButton = IconButton(
-        icon: const Icon(Icons.mail),
-        onPressed: () => {
-              //Kontakt zu Quaily einladen
-            });
     render();
     initContacts(this);
     searchbarController.addListener(() {
@@ -53,9 +57,10 @@ class ContactListWidgetState extends State<ContactListWidget> {
       showUserList = userList.isNotEmpty;
       showNonUserList = nonUserList.isNotEmpty;
 
-      userContactListWidget = getListWidget(userList, (c) => addContactButton);
+      userContactListWidget =
+          getListWidget(userList, (c) => createAddContact(c));
       nonUserContactListWidget =
-          getListWidget(nonUserList, (c) => inviteContactButton);
+          getListWidget(nonUserList, (c) => createInviteContact(c));
     });
   }
 
@@ -113,7 +118,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
   }
 }
 
-Widget getListWidget(List<Contact> list, Widget getButton(Contact c)) {
+Widget getListWidget(List<Contact> list, Widget Function(Contact c) getButton) {
   return SliverList(
     delegate: SliverChildBuilderDelegate(
       childCount: list.length,
