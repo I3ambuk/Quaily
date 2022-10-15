@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/addFriend.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
-import 'package:quaily/src/features/friends/utils/listUtils.dart';
+import 'package:quaily/src/features/friends/utils/listUtils.dart' as utils;
 
 class ContactListWidget extends StatefulWidget {
   @override
@@ -19,14 +19,14 @@ class ContactListWidgetState extends State<ContactListWidget> {
   late Widget userContactListWidget;
   late Widget nonUserContactListWidget;
   bool showUserList = true;
-  bool showNonUserList = true;
+  bool showContactList = true;
 
   IconButton createAddContact(QuailyUser c) {
     return IconButton(
         icon: const Icon(Icons.person_add),
         onPressed: () {
           //Kontakt freundschaftsanfrage senden
-          addContactAsFriend(c).then((value) => render());
+          addContactAsFriend(c);
         });
   }
 
@@ -42,28 +42,42 @@ class ContactListWidgetState extends State<ContactListWidget> {
   @override
   void initState() {
     super.initState();
-    render();
-    initContacts(userDataChanged);
-    userDataChanged.addListener(() {
-      render();
-    });
+    renderUserContact();
+    renderContacts();
     searchbarController.addListener(() {
-      render();
+      renderContacts();
+      renderUserContact();
+    });
+
+    utils.userContactMap.addListener(() {
+      renderUserContact();
+    });
+    utils.nonUserContactMap.addListener(() {
+      renderContacts();
+    });
+
+    utils.friendMap.addListener(() {});
+    utils.friendRequestsIn.addListener(() {});
+    utils.friendRequestsOut.addListener(() {});
+  }
+
+  void renderUserContact() {
+    var userList = utils.convertUserMapToList(
+        utils.userContactMap.value, searchbarController.text);
+    setState(() {
+      showUserList = userList.isNotEmpty;
+      userContactListWidget =
+          getUserListWidget(userList, (c) => createAddContact(c));
     });
   }
 
-  void render() {
-    var userList = getUserContactList(filter: searchbarController.text);
-    var nonUserList = getNonUserContactList(filter: searchbarController.text);
-
+  void renderContacts() {
+    var contactList = utils.convertContactMapToList(
+        utils.nonUserContactMap.value, searchbarController.text);
     setState(() {
-      showUserList = userList.isNotEmpty;
-      showNonUserList = nonUserList.isNotEmpty;
-
-      userContactListWidget =
-          getUserListWidget(userList, (c) => createAddContact(c));
+      showContactList = contactList.isNotEmpty;
       nonUserContactListWidget =
-          getContactListWidget(nonUserList, (c) => createInviteContact(c));
+          getContactListWidget(contactList, (c) => createInviteContact(c));
     });
   }
 
@@ -103,7 +117,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
               userContactListWidget,
               SliverToBoxAdapter(
                 child: Visibility(
-                  visible: showNonUserList,
+                  visible: showContactList,
                   child: Container(
                     color: Colors.grey,
                     alignment: Alignment.center,

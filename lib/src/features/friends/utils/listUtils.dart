@@ -5,23 +5,21 @@ import 'package:quaily/src/features/friends/utils/firebaseSocket.dart' as fs;
 
 //Maps all Contacts and QuailyUser with PhoneNumber as key
 //Contacts which not use App
-var _nonUserContactMap = <String, Contact>{};
+var nonUserContactMap = ValueNotifier(<String, Contact>{});
 //Contact which are Users,noFriends,noFriendRequestsIn, nofriendREquestsOut
-var _userContactMap = <String, QuailyUser>{};
+var userContactMap = ValueNotifier(<String, QuailyUser>{});
 //Friends of User
-var _friendMap = <String, QuailyUser>{};
+var friendMap = ValueNotifier(<String, QuailyUser>{});
 //Incoming FriendRequests
-var _friendRequestsIn = <String, QuailyUser>{};
+var friendRequestsIn = ValueNotifier(<String, QuailyUser>{});
 //Outgoing Friendrequests
-var _friendRequestsOut = <String, QuailyUser>{};
-
-String _currentFilter = '';
+var friendRequestsOut = ValueNotifier(<String, QuailyUser>{});
 
 ///Wird einmalig beim starten der App aufgerufen und initialisiert die benötigten Listen
-Future<void> initContacts(ChangeNotifier notify) async {
-  if (_nonUserContactMap.isEmpty) {
+Future<void> initContacts() async {
+  if (nonUserContactMap.value.isEmpty) {
     //Fetche alle Kontakte aus Kontakte und speichere sie in _nonUserContactMap -->initialer Zustad, da User unbekannt
-    _nonUserContactMap =
+    nonUserContactMap.value =
         (await ContactsService.getContactsNew(withThumbnails: false));
     //starte FirebaseListener, dieser Aktualisiert bei Änderung der UserCollection die Listen
     fs.setUpUserListener();
@@ -38,30 +36,30 @@ Future<void> initContacts(ChangeNotifier notify) async {
 ///updates Lists acordingly
 void handleNewUser(QuailyUser quailyUser) {
   //only add number not already known
-  if (_userContactMap.containsKey(quailyUser.phone) ||
-      _friendMap.containsKey(quailyUser.phone) ||
-      _friendRequestsIn.containsKey(quailyUser.phone) ||
-      _friendRequestsOut.containsKey(quailyUser.phone)) {
+  if (userContactMap.value.containsKey(quailyUser.phone) ||
+      friendMap.value.containsKey(quailyUser.phone) ||
+      friendRequestsIn.value.containsKey(quailyUser.phone) ||
+      friendRequestsOut.value.containsKey(quailyUser.phone)) {
     return;
   }
   //escape if there is no matching phonenumbers found in list of nonUser Contacts
   //remove if found
-  if (_nonUserContactMap.remove(quailyUser.phone) == null) {
+  if (nonUserContactMap.value.remove(quailyUser.phone) == null) {
     return;
   }
-  _userContactMap.putIfAbsent(quailyUser.phone, () => quailyUser);
+  userContactMap.value.putIfAbsent(quailyUser.phone, () => quailyUser);
 }
 
 ///get List of Contacts from userContactList which pass filter
-List<QuailyUser> getUserContactList({String? filter}) {
-  _currentFilter = filter ?? _currentFilter;
+List<QuailyUser> convertUserMapToList(
+    Map<String, QuailyUser> map, String filter) {
   //filter userList with filter
   List<QuailyUser> toFilter = [];
-  _userContactMap.forEach((key, value) {
+  map.forEach((key, value) {
     toFilter.add(value);
   });
   if (filter != '') {
-    String searchTerm = _currentFilter.toLowerCase();
+    String searchTerm = filter.toLowerCase();
 
     toFilter.retainWhere((quailyUser) {
       String displayName = quailyUser.displayname;
@@ -77,15 +75,14 @@ List<QuailyUser> getUserContactList({String? filter}) {
 }
 
 ///get List of Contacts from nonUserContactList which pass filter
-List<Contact> getNonUserContactList({String? filter}) {
-  _currentFilter = filter ?? _currentFilter;
+List<Contact> convertContactMapToList(Map<String, Contact> map, String filter) {
   //filter nonuserList with filter
   List<Contact> toFilter = [];
-  _nonUserContactMap.forEach((key, value) {
+  map.forEach((key, value) {
     toFilter.add(value);
   });
   if (filter != '') {
-    String searchTerm = _currentFilter.toLowerCase();
+    String searchTerm = filter.toLowerCase();
 
     toFilter.retainWhere((contact) {
       String givename = contact.givenName ?? '';
@@ -102,8 +99,4 @@ List<Contact> getNonUserContactList({String? filter}) {
     });
   }
   return toFilter;
-}
-
-List<Contact> getFriendRequests() {
-  return [];
 }
