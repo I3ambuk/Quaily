@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quaily/src/common/screens/loadingScreen.dart';
+import 'package:quaily/src/features/entryPoint/screens/loadingScreen.dart';
 import 'package:quaily/src/features/authentication/screens/signup.dart';
 
 import 'package:quaily/src/features/friends/screens/friends.dart';

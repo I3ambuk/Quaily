@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:quaily/src/common/screens/mainApp.dart';
+import 'package:quaily/src/features/entryPoint/screens/mainApp.dart';
 import 'package:quaily/src/features/authentication/utils/phoneLogin.dart';
 
 class PhoneLogin extends StatefulWidget {

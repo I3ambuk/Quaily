@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:quaily/src/common/data/userInformation.dart' as userinfo;
 
 class Settings extends StatefulWidget {
   @override
@@ -35,6 +36,8 @@ class _SettingsState extends State<Settings> {
             foregroundColor: MaterialStateProperty.all(Colors.red),
           ),
           onPressed: () async {
+            //andere Sachen bei Abmeldung zurücksetzten? Datenleak vermeiden!
+            userinfo.clear();
             await FirebaseAuth.instance.signOut().then((value) =>
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/signup', (route) => false));

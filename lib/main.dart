@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:quaily/src/common/screens/mainApp.dart';
+import 'package:quaily/src/features/entryPoint/screens/mainApp.dart';
 import 'package:quaily/src/features/authentication/screens/signup.dart';
 import 'src/common/services/firebase/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';

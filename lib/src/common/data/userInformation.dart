@@ -33,3 +33,9 @@ Future<void> initCurrentUser() async {
     currentQuailyUser = QuailyUser(displayName, userPhoneNumber, uid);
   }
 }
+
+void clear() {
+  currentFirebaseUser = null;
+  userDocRef = null;
+  currentQuailyUser = null;
+}
