@@ -13,7 +13,6 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingState extends State<LoadingScreen> {
   bool contactPermission = false;
 
-  //TODO: initialisiere daten bei appstart und frage nach Permissions
   @override
   void initState() {
     super.initState();
@@ -50,7 +49,6 @@ class _LoadingState extends State<LoadingScreen> {
     }
   }
 
-  //TODO: Initialisiere Daten und frage nach Permissions
   @override
   Widget build(BuildContext context) {
     return Scaffold(

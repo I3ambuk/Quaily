@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
-import 'package:quaily/src/features/friends/utils/addFriend.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
+import 'package:quaily/src/features/friends/utils/firebaseSocket.dart';
 import 'package:quaily/src/features/friends/utils/listUtils.dart' as utils;
 
 class ContactListWidget extends StatefulWidget {
@@ -21,12 +21,12 @@ class ContactListWidgetState extends State<ContactListWidget> {
   bool showUserList = true;
   bool showContactList = true;
 
-  IconButton createAddContact(QuailyUser c) {
+  IconButton createAddContact(QuailyUser qu) {
     return IconButton(
         icon: const Icon(Icons.person_add),
         onPressed: () {
           //Kontakt freundschaftsanfrage senden
-          addContactAsFriend(c);
+          sendFriendRequest(qu);
         });
   }
 
