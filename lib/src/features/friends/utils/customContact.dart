@@ -5,14 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart' as cs;
 
 class ContactsService extends cs.ContactsService {
-  static Future<List<Contact>> getContactsNew({withThumbnails = true}) async {
-    List<Contact> res = [];
+  static Future<Map<String, Contact>> getContactsNew(
+      {withThumbnails = true}) async {
+    var res = <String, Contact>{};
     await cs.ContactsService.getContacts(withThumbnails: withThumbnails)
-        .then((list) => list.forEach((contact) {
-              Color rndColor =
-                  Colors.primaries[Random().nextInt(Colors.primaries.length)];
-              res.add(Contact(contact, color: rndColor));
-            }));
+        .then((list) {
+      for (cs.Contact contact in list) {
+        Color rndColor =
+            Colors.primaries[Random().nextInt(Colors.primaries.length)];
+        if (contact.phones != null &&
+            contact.phones!.isNotEmpty &&
+            contact.phones!.first.value != null) {
+          res.putIfAbsent(contact.phones!.first.value!,
+              () => Contact(contact, color: rndColor));
+        }
+      }
+    });
     return res;
   }
 
@@ -44,10 +52,6 @@ class Contact extends cs.Contact {
       super.prefix = parent.prefix;
       super.suffix = parent.suffix;
     }
-  }
-
-  void setColor(Color color) {
-    this.color = color;
   }
 
   Color getColor() {

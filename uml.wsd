@@ -1,0 +1,185 @@
+@startuml
+set namespaceSeparator ::
+
+class "quaily::src::features::friends::components::contactListWidget.dart::ContactListWidget" {
+  +ContactListWidgetState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "quaily::src::features::friends::components::contactListWidget.dart::ContactListWidget"
+
+class "quaily::src::features::friends::components::contactListWidget.dart::ContactListWidgetState" {
+  +TextEditingController searchbarController
+  +Widget userContactListWidget
+  +Widget nonUserContactListWidget
+  +bool showUserList
+  +bool showNonUserList
+  +IconButton createAddContact()
+  +IconButton createInviteContact()
+  +void initState()
+  +void render()
+  +Widget build()
+}
+
+"quaily::src::features::friends::components::contactListWidget.dart::ContactListWidgetState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"quaily::src::features::friends::components::contactListWidget.dart::ContactListWidgetState" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::State" <|-- "quaily::src::features::friends::components::contactListWidget.dart::ContactListWidgetState"
+
+class "quaily::src::features::friends::utils::customContact.dart::ContactsService" {
+  {static} +Future<List<Contact>> getContactsNew()
+  {static} +Future<Uint8List?> getAvatar()
+}
+
+"contacts_service::contacts_service.dart::ContactsService" <|-- "quaily::src::features::friends::utils::customContact.dart::ContactsService"
+
+class "quaily::src::features::friends::utils::customContact.dart::Contact" {
+  +Color? color
+  +String? uid
+  +Color getColor()
+  +void setUid()
+  +String? getUid()
+}
+
+"quaily::src::features::friends::utils::customContact.dart::Contact" o-- "dart::ui::Color"
+"contacts_service::contacts_service.dart::Contact" <|-- "quaily::src::features::friends::utils::customContact.dart::Contact"
+
+class "quaily::src::features::friends::utils::customContact.dart::Item" {
+}
+
+"contacts_service::contacts_service.dart::Item" <|-- "quaily::src::features::friends::utils::customContact.dart::Item"
+
+class "quaily::src::features::friends::screens::friends.dart::Friends" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "quaily::src::features::friends::screens::friends.dart::Friends"
+
+class "quaily::src::features::friends::screens::friends.dart::_FriendsState" {
+  {static} -String _title
+  -TabController _tabController
+  +bool permission
+  +void initState()
+  -void _handleInvalidPermissions()
+  -Future<void> _askPermissions()
+  +Widget build()
+}
+
+"quaily::src::features::friends::screens::friends.dart::_FriendsState" o-- "flutter::src::material::tab_controller.dart::TabController"
+"flutter::src::widgets::framework.dart::State" <|-- "quaily::src::features::friends::screens::friends.dart::_FriendsState"
+"flutter::src::widgets::ticker_provider.dart::TickerProviderStateMixin" <|-- "quaily::src::features::friends::screens::friends.dart::_FriendsState"
+
+class "quaily::src::features::posts::screens::components::homePage.dart::HomePage" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "quaily::src::features::posts::screens::components::homePage.dart::HomePage"
+
+class "quaily::src::features::posts::screens::components::homePage.dart::HomePageState" {
+  {static} -String _title
+  +void initState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "quaily::src::features::posts::screens::components::homePage.dart::HomePageState"
+
+class "quaily::src::features::posts::screens::home.dart::Home" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "quaily::src::features::posts::screens::home.dart::Home"
+
+class "quaily::src::features::settings::screens::profile.dart::Profile" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "quaily::src::features::settings::screens::profile.dart::Profile"
+
+class "quaily::src::features::settings::screens::profile.dart::_ProfileState" {
+  {static} -String _title
+  +User? user
+  +void pickUploadImage()
+  +void initState()
+  +Widget build()
+}
+
+"quaily::src::features::settings::screens::profile.dart::_ProfileState" o-- "firebase_auth::firebase_auth.dart::User"
+"flutter::src::widgets::framework.dart::State" <|-- "quaily::src::features::settings::screens::profile.dart::_ProfileState"
+
+class "quaily::src::features::settings::screens::settings.dart::Settings" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "quaily::src::features::settings::screens::settings.dart::Settings"
+
+class "quaily::src::features::settings::screens::settings.dart::_SettingsState" {
+  {static} -String _title
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "quaily::src::features::settings::screens::settings.dart::_SettingsState"
+
+class "quaily::src::features::authentication::screens::signup.dart::SignUp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "quaily::src::features::authentication::screens::signup.dart::SignUp"
+
+class "quaily::src::features::authentication::screens::components::signUpAppBar.dart::SignUpAppBar" {
+  {static} -String _title
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "quaily::src::features::authentication::screens::components::signUpAppBar.dart::SignUpAppBar"
+
+class "quaily::src::features::authentication::screens::components::phoneLogin.dart::PhoneLogin" {
+  +State<StatefulWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "quaily::src::features::authentication::screens::components::phoneLogin.dart::PhoneLogin"
+
+class "quaily::src::features::authentication::screens::components::phoneLogin.dart::PhoneLoginState" {
+  +TextEditingController phoneController
+  +TextEditingController otpController
+  +bool otpVisibility
+  +String verificationID
+  +void initState()
+  +Widget build()
+  +void handleSuccessfulPhoneNumber()
+  +void handleSuccessfulLogin()
+  +void handlefailedLogin()
+}
+
+"quaily::src::features::authentication::screens::components::phoneLogin.dart::PhoneLoginState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "quaily::src::features::authentication::screens::components::phoneLogin.dart::PhoneLoginState"
+
+class "quaily::src::common::services::firebase::firebase_options.dart::DefaultFirebaseOptions" {
+  {static} +FirebaseOptions web
+  {static} +FirebaseOptions android
+  {static} +FirebaseOptions ios
+  {static} +FirebaseOptions macos
+  {static} +FirebaseOptions currentPlatform
+}
+
+"quaily::src::common::services::firebase::firebase_options.dart::DefaultFirebaseOptions" o-- "firebase_core_platform_interface::firebase_core_platform_interface.dart::FirebaseOptions"
+
+class "quaily::src::common::widgets::quailyAppBar.dart::QuailyAppBar" {
+  -Widget _leftIcon
+  -Widget _rightIcon
+  -String _title
+  +Widget build()
+}
+
+"quaily::src::common::widgets::quailyAppBar.dart::QuailyAppBar" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "quaily::src::common::widgets::quailyAppBar.dart::QuailyAppBar"
+
+class "quaily::firebase_options.dart::DefaultFirebaseOptions" {
+  {static} +FirebaseOptions web
+  {static} +FirebaseOptions android
+  {static} +FirebaseOptions ios
+  {static} +FirebaseOptions macos
+  {static} +FirebaseOptions currentPlatform
+}
+
+"quaily::firebase_options.dart::DefaultFirebaseOptions" o-- "firebase_core_platform_interface::firebase_core_platform_interface.dart::FirebaseOptions"
+
+
+@enduml

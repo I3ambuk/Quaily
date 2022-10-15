@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:quaily/src/common/screens/mainApp.dart';
 import 'package:quaily/src/features/authentication/screens/signup.dart';
-import 'package:quaily/src/features/posts/screens/home.dart';
 import 'src/common/services/firebase/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -23,7 +23,7 @@ void main() async {
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) =>
-            FirebaseAuth.instance.currentUser != null ? Home() : SignUp(),
+            FirebaseAuth.instance.currentUser != null ? MainApp() : SignUp(),
       },
     ),
   ));

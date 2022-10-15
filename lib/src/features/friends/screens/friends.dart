@@ -19,6 +19,7 @@ class _FriendsState extends State<Friends> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 2, vsync: this);
     _askPermissions();
   }

@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:quaily/src/common/data/userInformation.dart' as userInfo;
 import 'package:quaily/src/common/services/firebase/firebaseFunctions.dart';
+import 'package:quaily/src/common/utils/quailyUser.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -18,16 +20,13 @@ class _ProfileState extends State<Profile> {
   static const String _title = 'Profile';
 
   var user = FirebaseAuth.instance.currentUser;
+  var pb = userInfo.currentQuailyUser!.avatar; //currenQuailyUser = null?
 
-  void pickUploadImage() async {
+  Future<void> pickImage() async {
     if (await Permission.storage.request().isGranted) {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      Reference ref = FirebaseStorage.instance
-          .ref('users/' + user!.uid + "/")
-          .child('profilepic.jpg');
       if (image != null) {
-        await ref.putFile(File(image.path));
-        fetchProfilePicUrl();
+        return pickUploadImage(File(image.path));
       }
     }
   }
@@ -35,7 +34,11 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    fetchProfilePicUrl();
+    userInfo.currentQuailyUser!.addListener(() {
+      setState(() {
+        pb = userInfo.currentQuailyUser!.avatar;
+      });
+    });
   }
 
   @override
@@ -71,14 +74,11 @@ class _ProfileState extends State<Profile> {
               shape: const CircleBorder(),
               clipBehavior: Clip.hardEdge,
               color: Colors.transparent,
-              child: ValueListenableBuilder<String>(
-                valueListenable: profilePicUrl,
-                builder: (context, value, child) => Ink.image(
-                  image: getProfilePic(),
-                  fit: BoxFit.contain,
-                  child: InkWell(
-                    onTap: () => pickUploadImage(),
-                  ),
+              child: Ink.image(
+                image: pb,
+                fit: BoxFit.contain,
+                child: InkWell(
+                  onTap: () => pickImage(),
                 ),
               ),
             ),

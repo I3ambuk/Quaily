@@ -1,8 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:quaily/src/features/friends/utils/contactListUtils.dart';
+import 'package:quaily/src/common/utils/quailyUser.dart';
+import 'package:quaily/src/features/friends/utils/addFriend.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
+import 'package:quaily/src/features/friends/utils/listUtils.dart';
 
 class ContactListWidget extends StatefulWidget {
   @override
@@ -15,17 +15,18 @@ class ContactListWidgetState extends State<ContactListWidget> {
   //TODO: Kontakte schon beim starten der App initialisieren im Hintergrund
 
   TextEditingController searchbarController = TextEditingController();
+  ChangeNotifier userDataChanged = ChangeNotifier();
   late Widget userContactListWidget;
   late Widget nonUserContactListWidget;
   bool showUserList = true;
   bool showNonUserList = true;
 
-  IconButton createAddContact(Contact c) {
+  IconButton createAddContact(QuailyUser c) {
     return IconButton(
         icon: const Icon(Icons.person_add),
         onPressed: () {
           //Kontakt freundschaftsanfrage senden
-          addContactAsFriend(c);
+          addContactAsFriend(c).then((value) => render());
         });
   }
 
@@ -42,25 +43,27 @@ class ContactListWidgetState extends State<ContactListWidget> {
   void initState() {
     super.initState();
     render();
-    initContacts(this);
+    initContacts(userDataChanged);
+    userDataChanged.addListener(() {
+      render();
+    });
     searchbarController.addListener(() {
       render();
     });
   }
 
   void render() {
-    var userList = getUserContactListFiltered(filter: searchbarController.text);
-    var nonUserList =
-        getNonUserContactListFiltered(filter: searchbarController.text);
+    var userList = getUserContactList(filter: searchbarController.text);
+    var nonUserList = getNonUserContactList(filter: searchbarController.text);
 
     setState(() {
       showUserList = userList.isNotEmpty;
       showNonUserList = nonUserList.isNotEmpty;
 
       userContactListWidget =
-          getListWidget(userList, (c) => createAddContact(c));
+          getUserListWidget(userList, (c) => createAddContact(c));
       nonUserContactListWidget =
-          getListWidget(nonUserList, (c) => createInviteContact(c));
+          getContactListWidget(nonUserList, (c) => createInviteContact(c));
     });
   }
 
@@ -118,7 +121,8 @@ class ContactListWidgetState extends State<ContactListWidget> {
   }
 }
 
-Widget getListWidget(List<Contact> list, Widget Function(Contact c) getButton) {
+Widget getContactListWidget(
+    List<Contact> list, Widget Function(Contact c) iconButton) {
   return SliverList(
     delegate: SliverChildBuilderDelegate(
       childCount: list.length,
@@ -146,7 +150,36 @@ Widget getListWidget(List<Contact> list, Widget Function(Contact c) getButton) {
                     ),
                   ),
             title: Text(c.displayName ?? ""),
-            trailing: getButton(c),
+            trailing: iconButton(c),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+Widget getUserListWidget(
+    List<QuailyUser> list, Widget Function(QuailyUser qu) iconButton) {
+  return SliverList(
+    delegate: SliverChildBuilderDelegate(
+      childCount: list.length,
+      (BuildContext context, int index) {
+        QuailyUser? qu = list.elementAt(index);
+        return Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Colors.blueGrey,
+                width: 1,
+              ),
+            ),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.only(
+                left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
+            leading: CircleAvatar(backgroundImage: qu.avatar),
+            title: Text(qu.displayname),
+            trailing: iconButton(qu),
           ),
         );
       },

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:quaily/src/common/data/userInformation.dart' as userInfo;
+import 'package:quaily/src/common/utils/quailyUser.dart';
 
 import 'package:quaily/src/common/widgets/quailyAppBar.dart';
 import 'package:quaily/src/common/services/firebase/firebaseFunctions.dart';
@@ -10,11 +12,16 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   static const _title = 'Quaily.';
+  var pb = userInfo.currentQuailyUser!.avatar;
 
   @override
   void initState() {
     super.initState();
-    fetchProfilePicUrl();
+    userInfo.currentQuailyUser!.addListener(() {
+      setState(() {
+        pb = userInfo.currentQuailyUser!.avatar;
+      });
+    });
   }
 
   @override
@@ -36,14 +43,11 @@ class HomePageState extends State<HomePage> {
               shape: const CircleBorder(),
               clipBehavior: Clip.hardEdge,
               color: Colors.transparent,
-              child: ValueListenableBuilder<String>(
-                valueListenable: profilePicUrl,
-                builder: (context, value, child) => Ink.image(
-                  image: getProfilePic(),
-                  fit: BoxFit.cover,
-                  child: InkWell(
-                    onTap: () => Navigator.pushNamed(context, '/profile'),
-                  ),
+              child: Ink.image(
+                image: pb,
+                fit: BoxFit.cover,
+                child: InkWell(
+                  onTap: () => Navigator.pushNamed(context, '/profile'),
                 ),
               ),
             ),
