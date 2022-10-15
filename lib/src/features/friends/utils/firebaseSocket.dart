@@ -1,39 +1,94 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quaily/src/common/data/userInformation.dart' as userinfo;
 import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/listUtils.dart';
 
 var userCollection = FirebaseFirestore.instance.collection('users');
 var userSnapshotStream = userCollection.snapshots();
-var currentUser = FirebaseAuth.instance.currentUser;
 
 Future<bool> sendFriendRequest(QuailyUser qu) async {
   bool res = false;
-  if (currentUser == null) return false;
+  if (userinfo.currentQuailyUser == null) return false;
   var friendUserReqIn =
       userCollection.doc(qu.uid).collection('public').doc('requestsIn');
   var userReqOut = userCollection
-      .doc(currentUser!.uid)
+      .doc(userinfo.currentQuailyUser!.uid)
       .collection('public')
       .doc('requestsOut');
 
   //write currentUser in friendRequestIn from qu
-  await friendUserReqIn.set({currentUser!.uid: currentUser!.uid},
-      SetOptions(merge: true)).onError((error, stackTrace) {
+  var userData = {
+    userinfo.currentQuailyUser!.phone: jsonEncode({
+      'displayname': userinfo.currentQuailyUser!.displayname,
+      'uid': userinfo.currentQuailyUser!.uid
+    })
+  };
+  await friendUserReqIn
+      .set(userData, SetOptions(merge: true))
+      .onError((error, stackTrace) {
     print('Schreiben in RequestIn fehlgeschlagen!');
   });
+
   //write qu in friendRequestOut from user
-  await userReqOut.set({qu.uid: qu.uid}, SetOptions(merge: true)).onError(
-      (error, stackTrace) {
+  var friendData = {
+    qu.phone: jsonEncode({'displayname': qu.displayname, 'uid': qu.uid})
+  };
+  await userReqOut
+      .set(friendData, SetOptions(merge: true))
+      .onError((error, stackTrace) {
     print('Schreiben in RequestOut fehlgeschlagen!');
   }).then((value) => res = true);
 
   return res;
 }
 
-List<String> getFriendrequests() {
-  return [];
+Future<Map<String, QuailyUser>> getFriendrequestsIn() async {
+  var map = <String, QuailyUser>{};
+  if (userinfo.currentQuailyUser != null) {
+    var friendRequestsSnap = await userCollection
+        .doc(userinfo.currentQuailyUser!.uid)
+        .collection('public')
+        .doc('requestsIn')
+        .get();
+    var friendRequests = friendRequestsSnap.data() ?? <String, dynamic>{};
+
+    friendRequests.forEach((key, value) {
+      Map<String, dynamic> infos = jsonDecode(value.toString());
+      String displayname = infos.containsKey('displayname')
+          ? infos['displayname']!
+          : 'NoDisplayname';
+      String uid = infos.containsKey('uid') ? infos['uid']! : 'NoUid';
+      String phone = key;
+      map.putIfAbsent(phone, () => QuailyUser(displayname, phone, uid));
+    });
+  }
+  return map;
+}
+
+Future<Map<String, QuailyUser>> getFriendrequestsOut() async {
+  var map = <String, QuailyUser>{};
+  if (userinfo.currentQuailyUser != null) {
+    var friendRequestsSnap = await userCollection
+        .doc(userinfo.currentQuailyUser!.uid)
+        .collection('public')
+        .doc('requestsOut')
+        .get();
+    var friendRequests = friendRequestsSnap.data() ?? <String, dynamic>{};
+
+    friendRequests.forEach((key, value) {
+      Map<String, dynamic> infos = jsonDecode(value.toString());
+      String displayname = infos.containsKey('displayname')
+          ? infos['displayname']!
+          : 'NoDisplayname';
+      String uid = infos.containsKey('uid') ? infos['uid']! : 'NoUid';
+      String phone = key;
+      map.putIfAbsent(phone, () => QuailyUser(displayname, phone, uid));
+    });
+  }
+  return map;
 }
 
 bool addFriend(String uid) {
@@ -48,9 +103,9 @@ bool inviteContact(Contact c) {
   return false;
 }
 
-List<String> getFriends() {
-  return [];
-}
+// Future<Map<String, QuailyUser>> getFriends() {
+//   return [];
+// }
 
 void setUpUserListener() {
   userSnapshotStream.listen((querySnapshot) {

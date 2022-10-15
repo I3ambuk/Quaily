@@ -12,14 +12,16 @@ class ContactListWidget extends StatefulWidget {
 class ContactListWidgetState extends State<ContactListWidget> {
   //TODO: Neuer Abschnitt für momentane Freundesanfragen
   //TODO: Freundesanfrage annehmen Funktionalität
-  //TODO: Kontakte schon beim starten der App initialisieren im Hintergrund
 
   TextEditingController searchbarController = TextEditingController();
-  ChangeNotifier userDataChanged = ChangeNotifier();
-  late Widget userContactListWidget;
-  late Widget nonUserContactListWidget;
+  late Widget userListWidget;
+  late Widget contactListWidget;
+  late Widget friendRequestInWidget;
+  late Widget friendRequestOutWidget;
   bool showUserList = true;
   bool showContactList = true;
+  bool showFriendRequestOut = true;
+  bool showFriendRequestIn = true;
 
   IconButton createAddContact(QuailyUser qu) {
     return IconButton(
@@ -44,6 +46,9 @@ class ContactListWidgetState extends State<ContactListWidget> {
     super.initState();
     renderUserContact();
     renderContacts();
+    renderFriendRequestIn();
+    renderFriendRequestOut();
+
     searchbarController.addListener(() {
       renderContacts();
       renderUserContact();
@@ -57,8 +62,12 @@ class ContactListWidgetState extends State<ContactListWidget> {
     });
 
     utils.friendMap.addListener(() {});
-    utils.friendRequestsIn.addListener(() {});
-    utils.friendRequestsOut.addListener(() {});
+    utils.friendRequestsIn.addListener(() {
+      renderFriendRequestIn();
+    });
+    utils.friendRequestsOut.addListener(() {
+      renderFriendRequestOut();
+    });
   }
 
   void renderUserContact() {
@@ -66,8 +75,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.userContactMap.value, searchbarController.text);
     setState(() {
       showUserList = userList.isNotEmpty;
-      userContactListWidget =
-          getUserListWidget(userList, (c) => createAddContact(c));
+      userListWidget = getUserListWidget(userList, (c) => createAddContact(c));
     });
   }
 
@@ -76,8 +84,28 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.nonUserContactMap.value, searchbarController.text);
     setState(() {
       showContactList = contactList.isNotEmpty;
-      nonUserContactListWidget =
+      contactListWidget =
           getContactListWidget(contactList, (c) => createInviteContact(c));
+    });
+  }
+
+  void renderFriendRequestIn() {
+    var friendRequestsIn = utils.convertUserMapToList(
+        utils.friendRequestsIn.value, searchbarController.text);
+    setState(() {
+      showFriendRequestIn = friendRequestsIn.isNotEmpty;
+      friendRequestInWidget =
+          getUserListWidget(friendRequestsIn, (c) => createAddContact(c));
+    });
+  }
+
+  void renderFriendRequestOut() {
+    var friendRequestsOut = utils.convertUserMapToList(
+        utils.friendRequestsOut.value, searchbarController.text);
+    setState(() {
+      showFriendRequestOut = friendRequestsOut.isNotEmpty;
+      friendRequestOutWidget =
+          getUserListWidget(friendRequestsOut, (c) => createAddContact(c));
     });
   }
 
@@ -105,6 +133,30 @@ class ContactListWidgetState extends State<ContactListWidget> {
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: Visibility(
+                  visible: showFriendRequestOut,
+                  child: Container(
+                    color: Colors.grey,
+                    alignment: Alignment.center,
+                    height: 30,
+                    child: Text('Angefragte Freunde: '),
+                  ),
+                ),
+              ),
+              friendRequestOutWidget,
+              SliverToBoxAdapter(
+                child: Visibility(
+                  visible: showFriendRequestIn,
+                  child: Container(
+                    color: Colors.grey,
+                    alignment: Alignment.center,
+                    height: 30,
+                    child: Text('Freundesanfragen: '),
+                  ),
+                ),
+              ),
+              friendRequestInWidget,
+              SliverToBoxAdapter(
+                child: Visibility(
                   visible: showUserList,
                   child: Container(
                     color: Colors.grey,
@@ -114,7 +166,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
                   ),
                 ),
               ),
-              userContactListWidget,
+              userListWidget,
               SliverToBoxAdapter(
                 child: Visibility(
                   visible: showContactList,
@@ -126,7 +178,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
                   ),
                 ),
               ),
-              nonUserContactListWidget,
+              contactListWidget,
             ],
           ),
         ),

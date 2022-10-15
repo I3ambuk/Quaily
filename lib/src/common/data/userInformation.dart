@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:quaily/src/common/services/firebase/firebaseFunctions.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
 
+//TODO: Daten löschen bei Abmeldung!!
 User? currentFirebaseUser;
 DocumentReference<Map<String, dynamic>>? userDocRef;
 //Listanable currentUser all Pages using it will lsten to it

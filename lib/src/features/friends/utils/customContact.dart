@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart' as cs;
+import 'package:quaily/src/common/data/userInformation.dart' as ui;
 
 class ContactsService extends cs.ContactsService {
   static Future<Map<String, Contact>> getContactsNew(

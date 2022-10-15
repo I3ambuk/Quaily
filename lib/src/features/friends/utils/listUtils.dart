@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quaily/src/common/data/userInformation.dart' as userinfo;
 import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/firebaseSocket.dart' as fs;
@@ -21,12 +22,16 @@ Future<void> initContacts() async {
     //Fetche alle Kontakte aus Kontakte und speichere sie in _nonUserContactMap -->initialer Zustad, da User unbekannt
     nonUserContactMap.value =
         (await ContactsService.getContactsNew(withThumbnails: false));
-    //starte FirebaseListener, dieser Aktualisiert bei Änderung der UserCollection die Listen
-    fs.setUpUserListener();
+    //entferne falls eigene Nummer in den Kontakten
+    nonUserContactMap.value.remove(userinfo.currentQuailyUser!.phone);
 
     //TODO: map Friends to friendMap
-    //TODO: map incoming friendsRequests
-    //TODO: map outgoing friendrequests
+    //friendMap.value = await fs.getFriends();
+
+    friendRequestsIn.value = await fs.getFriendrequestsIn();
+    friendRequestsOut.value = await fs.getFriendrequestsOut();
+    //starte FirebaseListener, dieser Aktualisiert bei Änderung der UserCollection die Listen
+    fs.setUpUserListener();
   }
 }
 
