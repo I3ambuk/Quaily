@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quaily/src/common/data/userInformation.dart' as userinfo;
+import 'package:quaily/src/features/friends/utils/listUtils.dart' as friendlist;
 
 class Settings extends StatefulWidget {
   @override
@@ -37,6 +38,7 @@ class _SettingsState extends State<Settings> {
           ),
           onPressed: () async {
             //andere Sachen bei Abmeldung zurücksetzten? Datenleak vermeiden!
+            friendlist.clear();
             userinfo.clear();
             await FirebaseAuth.instance.signOut().then((value) =>
                 Navigator.pushNamedAndRemoveUntil(

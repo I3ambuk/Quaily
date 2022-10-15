@@ -35,6 +35,14 @@ Future<void> initContacts() async {
   }
 }
 
+void clear() {
+  nonUserContactMap = ValueNotifier(<String, Contact>{});
+  userContactMap = ValueNotifier(<String, QuailyUser>{});
+  friendMap = ValueNotifier(<String, QuailyUser>{});
+  friendRequestsIn = ValueNotifier(<String, QuailyUser>{});
+  friendRequestsOut = ValueNotifier(<String, QuailyUser>{});
+}
+
 ///!critical! -Used on a lot of data when App starts-
 ///
 ///called from socket, when a new User is added to Firebase
