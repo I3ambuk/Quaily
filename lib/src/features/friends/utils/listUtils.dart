@@ -4,9 +4,6 @@ import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/firebaseSocket.dart' as fs;
 
-//TODO:Bessere Trennung/Überprüfen det Listen, keine Doppelten vorkommen!
-//-->Übersichtlicher und verständlicher!
-
 //Maps all Contacts and QuailyUser with PhoneNumber as key
 //Contacts which not use App
 var nonUserContactMap = ValueNotifier(<String, Contact>{});
@@ -28,7 +25,7 @@ Future<void> initContacts() async {
     //entferne falls eigene Nummer in den Kontakten
     nonUserContactMap.value.remove(userinfo.currentQuailyUser!.phone);
 
-    //TODO: map Friends to friendMap
+    //SMALL: map Friends to friendMap
     //friendMap.value = await fs.getFriends();
 
     friendRequestsIn.value = await fs.getFriendrequestsIn();
@@ -52,15 +49,18 @@ void clear() {
 ///updates Lists acordingly
 void handleNewUser(QuailyUser quailyUser) {
   //only add number not already known
-  if (userContactMap.value.containsKey(quailyUser.phone) ||
-      friendMap.value.containsKey(quailyUser.phone) ||
-      friendRequestsIn.value.containsKey(quailyUser.phone) ||
-      friendRequestsOut.value.containsKey(quailyUser.phone)) {
+  if (userContactMap.value.containsKey(quailyUser.phone)) {
     return;
   }
   //escape if there is no matching phonenumbers found in list of nonUser Contacts
   //remove if found
   if (nonUserContactMap.value.remove(quailyUser.phone) == null) {
+    return;
+  }
+  //add to userContactMap, if User not already in other List
+  if (friendMap.value.containsKey(quailyUser.phone) ||
+      friendRequestsIn.value.containsKey(quailyUser.phone) ||
+      friendRequestsOut.value.containsKey(quailyUser.phone)) {
     return;
   }
   userContactMap.value.putIfAbsent(quailyUser.phone, () => quailyUser);

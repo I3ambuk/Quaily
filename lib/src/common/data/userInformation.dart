@@ -28,7 +28,7 @@ Future<void> initCurrentUser() async {
     String displayName = userData.containsKey('displayName')
         ? snapshot.get('displayName')
         : 'NoDisplayName :(';
-    //TODO: get ProfileUrl here and set avater with Imagenetwork directly (if exists)
+    //[ ] get ProfileUrl here and set avater with Imagenetwork directly (if exists)
     //if not slow way implemented in QuailyUser
     currentQuailyUser = QuailyUser(displayName, userPhoneNumber, uid);
   }

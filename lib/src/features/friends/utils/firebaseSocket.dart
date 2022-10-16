@@ -7,7 +7,6 @@ import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/listUtils.dart';
 
 var userCollection = FirebaseFirestore.instance.collection('users');
-var userSnapshotStream = userCollection.snapshots();
 
 Future<bool> sendFriendRequest(QuailyUser qu) async {
   bool res = false;
@@ -108,7 +107,7 @@ bool inviteContact(Contact c) {
 // }
 
 void setUpUserListener() {
-  userSnapshotStream.listen((querySnapshot) {
+  userCollection.snapshots().listen((querySnapshot) {
     for (var diff in querySnapshot.docChanges) {
       if (diff.type == DocumentChangeType.added) {
         if (diff.doc.exists && diff.doc.data() != null) {

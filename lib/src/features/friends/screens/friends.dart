@@ -9,7 +9,7 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> with TickerProviderStateMixin {
-  //TODO: momentane Freunde anzeigen
+  //SMALL: momentane Freunde anzeigen
   //TODO: momentane Freunde entfernen Funktionalität
 
   static const String _title = 'Friends';

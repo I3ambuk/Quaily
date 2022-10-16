@@ -38,7 +38,7 @@ class _SettingsState extends State<Settings> {
           ),
           onPressed: () async {
             //andere Sachen bei Abmeldung zurücksetzten? Datenleak vermeiden!
-            //TODO:Bessere Architektur überlegen um sicherzugehen, dass Daten beim Abmelden gelöscht
+            //BIG:Bessere Architektur überlegen um sicherzugehen, dass Daten beim Abmelden gelöscht
             //Welche daten werden wo langfristig gespeichert?
             //UtilKlassen zwingen clear zu implementieren? Evtl automatischer aufruf bei ausloggen mittels listener?
             friendlist.clear();
