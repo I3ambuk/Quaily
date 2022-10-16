@@ -9,6 +9,8 @@ class ContactListWidget extends StatefulWidget {
   ContactListWidgetState createState() => ContactListWidgetState();
 }
 
+//TODO: Freunde anzeigen im FreundeTab
+//BIG: User can search for existing quaily Contacts by name and phone
 class ContactListWidgetState extends State<ContactListWidget> {
   //TODO: Freundesanfrage annehmen/ablehnen Funktionalität
   FirebaseSocket socket = FirebaseSocket.instance;
@@ -24,7 +26,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
   bool showFriendRequestOut = true;
   bool showFriendRequestIn = true;
 
-  IconButton createAddContact(QuailyUser qu) {
+  Widget createAddContact(QuailyUser qu) {
     return IconButton(
         icon: const Icon(Icons.person_add),
         onPressed: () {
@@ -33,13 +35,35 @@ class ContactListWidgetState extends State<ContactListWidget> {
         });
   }
 
-  IconButton createInviteContact(Contact c) {
+  Widget createInviteContact(Contact c) {
     return IconButton(
         icon: const Icon(Icons.mail),
         onPressed: () {
           //Kontakt zu Quaily einladen
           socket.inviteContact(c);
         });
+  }
+
+  Widget createAcceptDeclineFriend(QuailyUser qu) {
+    return SizedBox(
+      width: 100,
+      child: Row(
+        children: [
+          IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () {
+                //Kontakt zu Quaily einladen
+                socket.addFriend(qu);
+              }),
+          IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                //Kontakt zu Quaily einladen
+                socket.declineFriendRequest(qu);
+              }),
+        ],
+      ),
+    );
   }
 
   @override
@@ -95,8 +119,8 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.friendRequestsIn.value, searchbarController.text);
     setState(() {
       showFriendRequestIn = friendRequestsIn.isNotEmpty;
-      friendRequestInWidget =
-          getUserListWidget(friendRequestsIn, (c) => createAddContact(c));
+      friendRequestInWidget = getUserListWidget(
+          friendRequestsIn, (c) => createAcceptDeclineFriend(c));
     });
   }
 
@@ -105,8 +129,11 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.friendRequestsOut.value, searchbarController.text);
     setState(() {
       showFriendRequestOut = friendRequestsOut.isNotEmpty;
-      friendRequestOutWidget =
-          getUserListWidget(friendRequestsOut, (c) => createAddContact(c));
+      friendRequestOutWidget = getUserListWidget(
+          friendRequestsOut,
+          (c) => Container(
+                width: 5,
+              ));
     });
   }
 
@@ -139,7 +166,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
                     color: Colors.grey,
                     alignment: Alignment.center,
                     height: 30,
-                    child: Text('Angefragte Freunde: '),
+                    child: Text('Anfrage gesendet: '),
                   ),
                 ),
               ),

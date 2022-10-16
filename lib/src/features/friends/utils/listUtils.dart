@@ -32,9 +32,7 @@ class ListUtils extends CurrentUserData {
       nonUserContactMap.value
           .remove(CurrentUserInfo.instance.currentQuailyUser!.phone);
 
-      //SMALL: map Friends to friendMap
-      //friendMap.value = await fs.getFriends();
-
+      friendMap.value = await FirebaseSocket.instance.getFriends();
       friendRequestsIn.value =
           await FirebaseSocket.instance.getFriendrequestsIn();
       friendRequestsOut.value =
