@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:quaily/src/common/data/userInformation.dart' as userInfo;
+import 'package:quaily/src/common/data/userInformation.dart';
 import 'package:quaily/src/common/services/firebase/firebaseFunctions.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
 
@@ -20,7 +20,8 @@ class _ProfileState extends State<Profile> {
   static const String _title = 'Profile';
 
   var user = FirebaseAuth.instance.currentUser;
-  var pb = userInfo.currentQuailyUser!.avatar; //currenQuailyUser = null?
+  var pb = CurrentUserInfo
+      .instance.currentQuailyUser!.avatar; //currenQuailyUser = null?
 
   Future<void> pickImage() async {
     if (await Permission.storage.request().isGranted) {
@@ -34,9 +35,9 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    userInfo.currentQuailyUser!.addListener(() {
+    CurrentUserInfo.instance.currentQuailyUser!.addListener(() {
       setState(() {
-        pb = userInfo.currentQuailyUser!.avatar;
+        pb = CurrentUserInfo.instance.currentQuailyUser!.avatar;
       });
     });
   }

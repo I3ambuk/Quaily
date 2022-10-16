@@ -61,5 +61,5 @@ Future<void> pickUploadImage(File file) async {
   //update file in Firebase
   await ref.putFile(file);
   //update QuailyUserAvatar
-  currentQuailyUser!.updateAvatar();
+  CurrentUserInfo.instance.currentQuailyUser!.updateAvatar();
 }

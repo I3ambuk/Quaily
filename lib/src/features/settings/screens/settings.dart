@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:quaily/src/common/data/userInformation.dart' as userinfo;
-import 'package:quaily/src/features/friends/utils/listUtils.dart' as friendlist;
+import 'package:quaily/src/common/utils/signOutHandler.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -37,13 +35,7 @@ class _SettingsState extends State<Settings> {
             foregroundColor: MaterialStateProperty.all(Colors.red),
           ),
           onPressed: () async {
-            //andere Sachen bei Abmeldung zurücksetzten? Datenleak vermeiden!
-            //BIG:Bessere Architektur überlegen um sicherzugehen, dass Daten beim Abmelden gelöscht
-            //Welche daten werden wo langfristig gespeichert?
-            //UtilKlassen zwingen clear zu implementieren? Evtl automatischer aufruf bei ausloggen mittels listener?
-            friendlist.clear();
-            userinfo.clear();
-            await FirebaseAuth.instance.signOut().then((value) =>
+            SignOutHandler.instance.signOut().then((value) =>
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/signup', (route) => false));
           },

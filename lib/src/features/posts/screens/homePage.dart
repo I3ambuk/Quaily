@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quaily/src/common/data/userInformation.dart' as userInfo;
+import 'package:quaily/src/common/data/userInformation.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
 
 import 'package:quaily/src/common/widgets/quailyAppBar.dart';
@@ -12,14 +12,14 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   static const _title = 'Quaily.';
-  var pb = userInfo.currentQuailyUser!.avatar;
+  var pb = CurrentUserInfo.instance.currentQuailyUser!.avatar;
 
   @override
   void initState() {
     super.initState();
-    userInfo.currentQuailyUser!.addListener(() {
+    CurrentUserInfo.instance.currentQuailyUser!.addListener(() {
       setState(() {
-        pb = userInfo.currentQuailyUser!.avatar;
+        pb = CurrentUserInfo.instance.currentQuailyUser!.avatar;
       });
     });
   }

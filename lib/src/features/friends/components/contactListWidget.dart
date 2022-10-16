@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/firebaseSocket.dart';
-import 'package:quaily/src/features/friends/utils/listUtils.dart' as utils;
+import 'package:quaily/src/features/friends/utils/listUtils.dart';
 
 class ContactListWidget extends StatefulWidget {
   @override
@@ -11,6 +11,8 @@ class ContactListWidget extends StatefulWidget {
 
 class ContactListWidgetState extends State<ContactListWidget> {
   //TODO: Freundesanfrage annehmen/ablehnen Funktionalität
+  FirebaseSocket socket = FirebaseSocket.instance;
+  ListUtils utils = ListUtils.instance;
 
   TextEditingController searchbarController = TextEditingController();
   late Widget userListWidget;
@@ -27,7 +29,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         icon: const Icon(Icons.person_add),
         onPressed: () {
           //Kontakt freundschaftsanfrage senden
-          sendFriendRequest(qu);
+          socket.sendFriendRequest(qu);
         });
   }
 
@@ -36,7 +38,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         icon: const Icon(Icons.mail),
         onPressed: () {
           //Kontakt zu Quaily einladen
-          inviteContact(c);
+          socket.inviteContact(c);
         });
   }
 

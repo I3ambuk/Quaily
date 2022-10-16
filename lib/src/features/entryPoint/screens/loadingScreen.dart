@@ -20,11 +20,16 @@ class _LoadingState extends State<LoadingScreen> {
   }
 
   Future<void> init() async {
-    await initCurrentUser();
+    //Init Data everyone uses
+    if (!await CurrentUserInfo.instance.initCurrentUserInfo()) {
+      //initialisieren Fehlgeschlagen, Error und zurück zu SignUp
+      print('Initialisieren der Daten fehlgeschlagen!');
+    }
 
+    //Init Data for friendfeature
     await _askPermissions();
     if (contactPermission) {
-      await initContacts();
+      await ListUtils.instance.initContacts();
     }
   }
 
