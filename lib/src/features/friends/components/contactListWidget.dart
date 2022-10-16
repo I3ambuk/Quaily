@@ -10,8 +10,7 @@ class ContactListWidget extends StatefulWidget {
 }
 
 class ContactListWidgetState extends State<ContactListWidget> {
-  //TODO: Neuer Abschnitt für momentane Freundesanfragen
-  //TODO: Freundesanfrage annehmen Funktionalität
+  //TODO: Freundesanfrage annehmen/ablehnen Funktionalität
 
   TextEditingController searchbarController = TextEditingController();
   late Widget userListWidget;

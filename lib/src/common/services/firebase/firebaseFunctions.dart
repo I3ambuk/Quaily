@@ -36,7 +36,8 @@ Future<String?> _getProfilePicUrl(String path) async {
   Reference picRef = folderRef.child('profilepic.jpg');
   await folderRef.listAll().then((res) async {
     if (res.items.isNotEmpty) {
-      result = await picRef.getDownloadURL();
+      result = await picRef
+          .getDownloadURL(); //TODO:speichere URL in FirestoreDatabase und erstelle nur bei nichtvorhanden sein.
     }
   }).catchError((error) {
     print('Profilbild nicht gefunden!');

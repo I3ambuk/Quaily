@@ -4,6 +4,9 @@ import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/firebaseSocket.dart' as fs;
 
+//TODO:Bessere Trennung/Überprüfen det Listen, keine Doppelten vorkommen!
+//-->Übersichtlicher und verständlicher!
+
 //Maps all Contacts and QuailyUser with PhoneNumber as key
 //Contacts which not use App
 var nonUserContactMap = ValueNotifier(<String, Contact>{});
