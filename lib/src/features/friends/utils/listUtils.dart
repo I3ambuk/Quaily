@@ -9,7 +9,7 @@ class ListUtils extends CurrentUserData {
   ListUtils._privateConstructor();
   static final ListUtils instance = ListUtils._privateConstructor();
 
-  //Maps all Contacts and QuailyUser with PhoneNumber as key
+  //Maps all Contacts and QuailyUser with (key:Phone, value:User)
 //Contacts which not use App
   var nonUserContactMap = ValueNotifier(<String, Contact>{});
 //Contact which are Users,noFriends,noFriendRequestsIn, nofriendREquestsOut
@@ -46,11 +46,11 @@ class ListUtils extends CurrentUserData {
 
   @override
   void clearData() {
-    nonUserContactMap = ValueNotifier(<String, Contact>{});
-    userContactMap = ValueNotifier(<String, QuailyUser>{});
-    friendMap = ValueNotifier(<String, QuailyUser>{});
-    friendRequestsIn = ValueNotifier(<String, QuailyUser>{});
-    friendRequestsOut = ValueNotifier(<String, QuailyUser>{});
+    nonUserContactMap.value.clear();
+    userContactMap.value.clear();
+    friendMap.value.clear();
+    friendRequestsIn.value.clear();
+    friendRequestsOut.value.clear();
   }
 
   ///!critical! -Used on a lot of data when App starts-
@@ -129,5 +129,57 @@ class ListUtils extends CurrentUserData {
       });
     }
     return toFilter;
+  }
+
+  Future<bool> sendFriendRequest(QuailyUser qu) async {
+    if (await FirebaseSocket.instance.sendFriendRequest(qu)) {
+      //update User von userContactMap in FriendRequestOut
+      userContactMap.value.remove(qu.phone);
+      friendRequestsOut.value.putIfAbsent(qu.phone, () => qu);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> addFriend(QuailyUser qu) async {
+    if (await FirebaseSocket.instance.addFriend(qu)) {
+      //update User von FriendRequestIn in Friends
+      friendRequestsIn.value.remove(qu.phone);
+      friendMap.value.putIfAbsent(qu.phone, () => qu);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> declineFriendRequest(QuailyUser qu) async {
+    if (await FirebaseSocket.instance.removeFriend(qu)) {
+      //remove User von FriendRequestIn
+      friendRequestsIn.value.remove(qu.phone);
+      syncAll();
+      //full sync needed if qu was a UserContact
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> removeFriend(QuailyUser qu) async {
+    if (await FirebaseSocket.instance.removeFriend(qu)) {
+      //remove from friendMap
+      friendMap.value.remove(qu.phone);
+      syncAll();
+      //full sync needed if qu was UserContact
+      return true;
+    }
+    return false;
+  }
+
+  bool inviteContact(Contact c) {
+    print('User eingeladen!');
+    return false;
+  }
+
+  Future<bool> syncAll() async {
+    clearData();
+    return await initContacts();
   }
 }

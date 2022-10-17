@@ -7,8 +7,7 @@ import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
 import 'package:quaily/src/features/friends/utils/listUtils.dart';
 
-//TODO: Functionen zusammenfassen die ähnlich sind!! (die ganzen getter)
-//TODO: nach den sendRequest und add frien listen aktualisiern!
+//BUG: Testen Notwendig! Nach den sendRequest und add friend listen aktualisiern!
 class FirebaseSocket extends CurrentUserData {
   FirebaseSocket._privateConstructor();
   static final FirebaseSocket instance = FirebaseSocket._privateConstructor();
@@ -22,180 +21,39 @@ class FirebaseSocket extends CurrentUserData {
   }
 
   Future<bool> sendFriendRequest(QuailyUser qu) async {
-    bool res = false;
     if (_currentUser != null) {
-      var qufriends =
-          _userCollection.doc(qu.uid).collection('public').doc('friends');
-
-      var userfriends = _userCollection
-          .doc(_currentUser!.uid)
-          .collection('public')
-          .doc('friends');
-
-      //write currentUser in friends from qu with status pending
-      var userData = {
-        _currentUser!.phone: jsonEncode({
-          'displayname': _currentUser!.displayname,
-          'uid': _currentUser!.uid,
-          'status': 'pending'
-        })
-      };
-      await qufriends
-          .set(userData, SetOptions(merge: true))
-          .onError((error, stackTrace) {
-        print('Schreiben in RequestIn fehlgeschlagen!');
-      });
-
-      //write qu in friends from user with status requested
-      var friendData = {
-        qu.phone: jsonEncode({
-          'displayname': qu.displayname,
-          'uid': qu.uid,
-          'status': 'requested'
-        })
-      };
-      await userfriends
-          .set(friendData, SetOptions(merge: true))
-          .onError((error, stackTrace) {
-        print('Schreiben in RequestOut fehlgeschlagen!');
-      }).then((value) => res = true);
+      return await _setFriend(_currentUser!, qu, 'requested') &&
+          await _setFriend(qu, _currentUser!, 'pending');
     }
-    return res;
-  }
-
-  Future<Map<String, QuailyUser>> getFriendrequestsIn() async {
-    var map = <String, QuailyUser>{};
-    if (_currentUser != null) {
-      var friendsSnap = await _userCollection
-          .doc(_currentUser!.uid)
-          .collection('public')
-          .doc('friends')
-          .get();
-      var friends = friendsSnap.data() ?? <String, dynamic>{};
-
-      friends.forEach((key, value) {
-        Map<String, dynamic> infos = jsonDecode(value.toString());
-        //add to map if status is pending
-        String status = infos.containsKey('status') ? infos['status'] : '';
-        if (status == 'pending') {
-          String displayname = infos.containsKey('displayname')
-              ? infos['displayname']!
-              : 'NoDisplayname';
-          String uid = infos.containsKey('uid') ? infos['uid']! : 'NoUid';
-          String phone = key;
-          map.putIfAbsent(phone, () => QuailyUser(displayname, phone, uid));
-        }
-      });
-    }
-    return map;
-  }
-
-  Future<Map<String, QuailyUser>> getFriendrequestsOut() async {
-    var map = <String, QuailyUser>{};
-    if (_currentUser != null) {
-      var friendsSnap = await _userCollection
-          .doc(_currentUser!.uid)
-          .collection('public')
-          .doc('friends')
-          .get();
-      var friends = friendsSnap.data() ?? <String, dynamic>{};
-
-      friends.forEach((key, value) {
-        Map<String, dynamic> infos = jsonDecode(value.toString());
-        //map if status is requested
-        String status = infos.containsKey('status') ? infos['status'] : '';
-        if (status == 'requested') {
-          String displayname = infos.containsKey('displayname')
-              ? infos['displayname']!
-              : 'NoDisplayname';
-          String uid = infos.containsKey('uid') ? infos['uid']! : 'NoUid';
-          String phone = key;
-          map.putIfAbsent(phone, () => QuailyUser(displayname, phone, uid));
-        }
-      });
-    }
-    return map;
+    return false;
   }
 
   Future<bool> addFriend(QuailyUser qu) async {
-    bool res = false;
-
     if (_currentUser != null) {
-      var quFriends =
-          _userCollection.doc(qu.uid).collection('public').doc('friends');
-      var userFriends = _userCollection
-          .doc(_currentUser!.uid)
-          .collection('public')
-          .doc('friends');
-
-      //update newFriends Firebase DB
-      //write currentUser in friends from qu with status accepted
-      var userData = {
-        _currentUser!.phone: jsonEncode({
-          'displayname': _currentUser!.displayname,
-          'uid': _currentUser!.uid,
-          'status': 'accepted'
-        })
-      };
-      await quFriends.update(userData).onError((error, stackTrace) {
-        print('UPDATE VON QU FRIENDS FEHLGESCHLAGEN!!');
-        res = false;
-      });
-      //update own Firebase DB
-      //write qu in friends from user with status accepted
-      var friendData = {
-        qu.phone: jsonEncode({
-          'displayname': qu.displayname,
-          'uid': qu.uid,
-          'status': 'accepted'
-        })
-      };
-      await userFriends.update(friendData).onError((error, stackTrace) {
-        print('UPDATE VON USER FRIENDS FEHLGESCHLAGEN!!');
-        res = false;
-      });
+      return await _setFriend(_currentUser!, qu, 'accepted') &&
+          await _setFriend(qu, _currentUser!, 'accepted');
     }
-    return res;
-  }
-
-  bool declineFriendRequest(QuailyUser qu) {
-    //TODO: implement decline FriendRequest
     return false;
   }
 
-  bool removeFriend(String uid) {
-    return false;
+  Future<Map<String, QuailyUser>> getFriendrequestsIn() async {
+    return _getFriendWithStatus('pending');
   }
 
-  bool inviteContact(Contact c) {
-    return false;
+  Future<Map<String, QuailyUser>> getFriendrequestsOut() async {
+    return _getFriendWithStatus('requested');
   }
 
   Future<Map<String, QuailyUser>> getFriends() async {
-    var map = <String, QuailyUser>{};
-    if (_currentUser != null) {
-      var friendsSnap = await _userCollection
-          .doc(_currentUser!.uid)
-          .collection('public')
-          .doc('friends')
-          .get();
-      var friends = friendsSnap.data() ?? <String, dynamic>{};
+    return _getFriendWithStatus('accepted');
+  }
 
-      friends.forEach((key, value) {
-        Map<String, dynamic> infos = jsonDecode(value.toString());
-        //map if status is requested
-        String status = infos.containsKey('status') ? infos['status'] : '';
-        if (status == 'accepted') {
-          String displayname = infos.containsKey('displayname')
-              ? infos['displayname']!
-              : 'NoDisplayname';
-          String uid = infos.containsKey('uid') ? infos['uid']! : 'NoUid';
-          String phone = key;
-          map.putIfAbsent(phone, () => QuailyUser(displayname, phone, uid));
-        }
-      });
+  Future<bool> removeFriend(QuailyUser qu) async {
+    if (_currentUser != null) {
+      return await _removeFriend(_currentUser!, qu) &&
+          await _removeFriend(qu, _currentUser!);
     }
-    return map;
+    return false;
   }
 
   void setUpUserListener() {
@@ -221,5 +79,78 @@ class FirebaseSocket extends CurrentUserData {
         if (diff.type == DocumentChangeType.modified) {}
       }
     });
+  }
+
+  ///sets the $frienOfUser to the friendlist of $user in Firebase with the given status(pending, requested, accepted)
+  Future<bool> _setFriend(
+      QuailyUser user, QuailyUser friendOfUser, String status) async {
+    var res = false;
+    //Reference of friendlist of $user
+    var friends =
+        _userCollection.doc(user.uid).collection('public').doc('friends');
+    //Data to write
+    var data = {
+      friendOfUser.phone: jsonEncode({
+        'displayname': friendOfUser.displayname,
+        'uid': friendOfUser.uid,
+        'status': status,
+      })
+    };
+    if (status == 'accepted') {
+      //update existing friend and accept, accepting a non-existing friend is not possible
+      await friends.update(data).onError((error, stackTrace) {
+        print(
+            'Schreiben von ${friendOfUser.uid}, als $status in Freundesliste von ${user.uid} fehlgeschlagen!');
+      }).then((value) => res = true);
+    } else if (status == 'pending' || status == 'requested') {
+      //set non-existing friend
+      await friends
+          .set(data, SetOptions(merge: true))
+          .onError((error, stackTrace) {
+        print(
+            'Schreiben von ${friendOfUser.uid}, als $status in Freundesliste von ${user.uid} fehlgeschlagen!');
+      }).then((value) => res = true);
+    }
+    return res;
+  }
+
+  Future<bool> _removeFriend(QuailyUser user, QuailyUser friendToRemove) async {
+    //Reference of friendlist of $user
+    var friendsSnap = await _userCollection
+        .doc(user.uid)
+        .collection('public')
+        .doc('friends')
+        .get();
+    var friends = friendsSnap.data() ?? <String, dynamic>{};
+
+    return (friends.remove(friendToRemove.phone) != null);
+  }
+
+  Future<Map<String, QuailyUser>> _getFriendWithStatus(String status) async {
+    var map = <String, QuailyUser>{};
+    if (_currentUser != null) {
+      var friendsSnap = await _userCollection
+          .doc(_currentUser!.uid)
+          .collection('public')
+          .doc('friends')
+          .get();
+      var friends = friendsSnap.data() ?? <String, dynamic>{};
+
+      friends.forEach((key, value) {
+        Map<String, dynamic> infos = jsonDecode(value.toString());
+        //add to map if status is pending
+        String friendStatus =
+            infos.containsKey('status') ? infos['status'] : '';
+        if (friendStatus == status) {
+          String displayname = infos.containsKey('displayname')
+              ? infos['displayname']!
+              : 'NoDisplayname';
+          String uid = infos.containsKey('uid') ? infos['uid']! : 'NoUid';
+          String phone = key;
+          map.putIfAbsent(phone, () => QuailyUser(displayname, phone, uid));
+        }
+      });
+    }
+    return map;
   }
 }

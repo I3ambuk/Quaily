@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:quaily/src/common/utils/quailyUser.dart';
 import 'package:quaily/src/features/friends/utils/customContact.dart';
-import 'package:quaily/src/features/friends/utils/firebaseSocket.dart';
 import 'package:quaily/src/features/friends/utils/listUtils.dart';
+import 'package:quaily/src/features/friends/components/listWidgets.dart'
+    as widgets;
 
 class ContactListWidget extends StatefulWidget {
   @override
   ContactListWidgetState createState() => ContactListWidgetState();
 }
 
-//TODO: Freunde anzeigen im FreundeTab
 //BIG: User can search for existing quaily Contacts by name and phone
 class ContactListWidgetState extends State<ContactListWidget> {
-  //TODO: Freundesanfrage annehmen/ablehnen Funktionalität
-  FirebaseSocket socket = FirebaseSocket.instance;
+  //BUG: Testen! Freundesanfrage annehmen/ablehnen Funktionalität-Done?
   ListUtils utils = ListUtils.instance;
 
   TextEditingController searchbarController = TextEditingController();
@@ -31,7 +30,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         icon: const Icon(Icons.person_add),
         onPressed: () {
           //Kontakt freundschaftsanfrage senden
-          socket.sendFriendRequest(qu);
+          utils.sendFriendRequest(qu);
         });
   }
 
@@ -40,7 +39,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         icon: const Icon(Icons.mail),
         onPressed: () {
           //Kontakt zu Quaily einladen
-          socket.inviteContact(c);
+          utils.inviteContact(c);
         });
   }
 
@@ -53,13 +52,13 @@ class ContactListWidgetState extends State<ContactListWidget> {
               icon: const Icon(Icons.check),
               onPressed: () {
                 //Kontakt zu Quaily einladen
-                socket.addFriend(qu);
+                utils.addFriend(qu);
               }),
           IconButton(
               icon: const Icon(Icons.clear),
               onPressed: () {
                 //Kontakt zu Quaily einladen
-                socket.declineFriendRequest(qu);
+                utils.declineFriendRequest(qu);
               }),
         ],
       ),
@@ -75,8 +74,10 @@ class ContactListWidgetState extends State<ContactListWidget> {
     renderFriendRequestOut();
 
     searchbarController.addListener(() {
-      renderContacts();
       renderUserContact();
+      renderContacts();
+      renderFriendRequestIn();
+      renderFriendRequestOut();
     });
 
     utils.userContactMap.addListener(() {
@@ -85,8 +86,6 @@ class ContactListWidgetState extends State<ContactListWidget> {
     utils.nonUserContactMap.addListener(() {
       renderContacts();
     });
-
-    utils.friendMap.addListener(() {});
     utils.friendRequestsIn.addListener(() {
       renderFriendRequestIn();
     });
@@ -100,7 +99,8 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.userContactMap.value, searchbarController.text);
     setState(() {
       showUserList = userList.isNotEmpty;
-      userListWidget = getUserListWidget(userList, (c) => createAddContact(c));
+      userListWidget =
+          widgets.getUserListWidget(userList, (c) => createAddContact(c));
     });
   }
 
@@ -109,8 +109,8 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.nonUserContactMap.value, searchbarController.text);
     setState(() {
       showContactList = contactList.isNotEmpty;
-      contactListWidget =
-          getContactListWidget(contactList, (c) => createInviteContact(c));
+      contactListWidget = widgets.getContactListWidget(
+          contactList, (c) => createInviteContact(c));
     });
   }
 
@@ -119,7 +119,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.friendRequestsIn.value, searchbarController.text);
     setState(() {
       showFriendRequestIn = friendRequestsIn.isNotEmpty;
-      friendRequestInWidget = getUserListWidget(
+      friendRequestInWidget = widgets.getUserListWidget(
           friendRequestsIn, (c) => createAcceptDeclineFriend(c));
     });
   }
@@ -129,7 +129,7 @@ class ContactListWidgetState extends State<ContactListWidget> {
         utils.friendRequestsOut.value, searchbarController.text);
     setState(() {
       showFriendRequestOut = friendRequestsOut.isNotEmpty;
-      friendRequestOutWidget = getUserListWidget(
+      friendRequestOutWidget = widgets.getUserListWidget(
           friendRequestsOut,
           (c) => Container(
                 width: 5,
@@ -213,70 +213,4 @@ class ContactListWidgetState extends State<ContactListWidget> {
       ],
     );
   }
-}
-
-Widget getContactListWidget(
-    List<Contact> list, Widget Function(Contact c) iconButton) {
-  return SliverList(
-    delegate: SliverChildBuilderDelegate(
-      childCount: list.length,
-      (BuildContext context, int index) {
-        Contact? c = list.elementAt(index);
-        return Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Colors.blueGrey,
-                width: 1,
-              ),
-            ),
-          ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.only(
-                left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
-            leading: (c.avatar != null && c.avatar!.isNotEmpty)
-                ? CircleAvatar(backgroundImage: MemoryImage(c.avatar!))
-                : CircleAvatar(
-                    backgroundColor: c.getColor(),
-                    child: Text(
-                      c.initials(),
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-            title: Text(c.displayName ?? ""),
-            trailing: iconButton(c),
-          ),
-        );
-      },
-    ),
-  );
-}
-
-Widget getUserListWidget(
-    List<QuailyUser> list, Widget Function(QuailyUser qu) iconButton) {
-  return SliverList(
-    delegate: SliverChildBuilderDelegate(
-      childCount: list.length,
-      (BuildContext context, int index) {
-        QuailyUser? qu = list.elementAt(index);
-        return Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Colors.blueGrey,
-                width: 1,
-              ),
-            ),
-          ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.only(
-                left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
-            leading: CircleAvatar(backgroundImage: qu.avatar),
-            title: Text(qu.displayname),
-            trailing: iconButton(qu),
-          ),
-        );
-      },
-    ),
-  );
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:quaily/src/common/utils/permissionHandler.dart';
 import 'package:quaily/src/features/friends/components/contactListWidget.dart';
+import 'package:quaily/src/features/friends/components/friendListWidget.dart';
+import 'package:quaily/src/features/friends/utils/listUtils.dart';
 
 class Friends extends StatefulWidget {
   @override
@@ -9,8 +11,8 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> with TickerProviderStateMixin {
-  //SMALL: momentane Freunde anzeigen
-  //TODO: momentane Freunde entfernen Funktionalität
+  //BUG: momentane Freunde entfernen Funktionalität, was hat es mit dem set state error zu tun? Aufruf
+  // von addlistener(render()...) Begutachten!
 
   static const String _title = 'Friends';
   late TabController _tabController;
@@ -57,12 +59,12 @@ class _FriendsState extends State<Friends> with TickerProviderStateMixin {
           children: [
             IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(
-                Icons.arrow_back,
-              ),
+              icon: const Icon(Icons.arrow_back),
             ),
             const Text(_title),
-            const SizedBox(width: 32.0, height: 32.0),
+            IconButton(
+                onPressed: () => ListUtils.instance.syncAll(),
+                icon: const Icon(Icons.sync)),
           ],
         ),
       ),
@@ -88,7 +90,7 @@ class _FriendsState extends State<Friends> with TickerProviderStateMixin {
                   : const Text("Fehlende Berechtigung um Kontakte anzuzeigen"),
             ),
             Center(
-              child: Text("Bereits registrierte Freunde anzeigen"),
+              child: FriendListWidget(),
             ),
           ],
         ),
